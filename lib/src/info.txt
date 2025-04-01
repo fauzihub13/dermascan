@@ -1,0 +1,20 @@
+
+-------------------------------------
+|       Clean Architecture Flow     |
+-------------------------------------
+
+UI 
+↓
+BLoC Event 
+↓
+Call Usecase 
+↓
+Call Abstract ContactRepository 
+↓
+Call Implement Repository 
+↓
+Call Datasources 
+↓
+Return List DataModel 
+↓
+Show on UI

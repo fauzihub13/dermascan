@@ -1,0 +1,1 @@
+Reusable components such as data, domain, or presentation
