@@ -8,6 +8,11 @@ class FontSize {
   static const large = 26.0;
 }
 
+class PaddingSize {
+  static const horizontal = 18.0;
+  static const vertical = 18.0;
+}
+
 class DefaultColors {
   static const greyText = Color(0xffb3b9c9);
   static const whiteText = Color(0xffFFFFFF);
@@ -40,6 +45,7 @@ class DefaultColors {
   static const Color grey = Color(0xFF7D8A95);
   static const Color lightGrey = Color(0xFFB2BCC9);
   static const Color lightGrey2 = Color(0xFFFAFAFC);
+  static const Color lightGrey3 = Color(0xFFF7F8F8);
   static const Color lightBlue = Color(0xFFF4F9FF);
   static const Color navbarDisable = Color(0xFFC4C4C4);
 
@@ -47,6 +53,23 @@ class DefaultColors {
   static const Color snackBarGreen = Color(0xff50C474);
   static const Color snackBarYellow = Color(0xffFEC62E);
   static const Color snackBarRed = Color(0xffF4261A);
+
+  // AppBar
+  static const Color appBarBackgroundColor = Color(0xffFFFFFF);
+
+  // Diagnose History Badge
+  static const Color lightYellowBadge = Color(0xffFFF5D9);
+  static const Color darkYellowBadge = Color(0xffCC9603);
+
+  static const Color lightGreenBadge = Color.fromARGB(255, 210, 247, 211);
+  static const Color darkGreenBadge = Color(0xff387F39);
+
+  static const Color lightRedBadge = Color.fromARGB(255, 255, 156, 150);
+  static const Color darkRedBadge = Color.fromARGB(255, 255, 28, 16);
+
+  static const Color darkBlueBadge = Color(0xFF0165FC);
+  static const Color lightBlueBadge = Color(0xffE0EBFF);
+
 
 }
 
@@ -65,16 +88,16 @@ class AppTheme {
           fontSize: FontSize.medium,
           color: DefaultColors.lightTextColor,
         ),
+        bodyLarge: TextStyle(
+          fontSize: FontSize.standardUp,
+          color: DefaultColors.lightTextColor,
+        ),
         bodySmall: TextStyle(
           fontSize: FontSize.standardUp,
           color: DefaultColors.lightTextColor,
         ),
         bodyMedium: TextStyle(
           fontSize: FontSize.standard,
-          color: DefaultColors.lightTextColor,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: FontSize.standardUp,
           color: DefaultColors.lightTextColor,
         ),
         labelSmall: TextStyle(
