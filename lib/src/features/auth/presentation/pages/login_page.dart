@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/auth/presentation/pages/register_page.dart';
-import 'package:flutter_dermascan/src/features/home/presentation/pages/home_page.dart';
+import 'package:flutter_dermascan/src/features/home/presentation/pages/landing_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) {
-                                return HomePage();
+                                return LandingPage();
                               },
                             ),
                           );

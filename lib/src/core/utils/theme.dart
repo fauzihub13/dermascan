@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class FontSize {
   static const small = 12.0;
+  static const medium = 13.0;
   static const standard = 14.0;
   static const standardUp = 16.0;
-  static const medium = 13.0;
+  static const standardUp2 = 18.0;
   static const large = 26.0;
 }
 
@@ -46,6 +47,7 @@ class DefaultColors {
   static const Color lightGrey = Color(0xFFB2BCC9);
   static const Color lightGrey2 = Color(0xFFFAFAFC);
   static const Color lightGrey3 = Color(0xFFF7F8F8);
+  static const Color lightGrey4 = Color(0xFFEDEDF2);
   static const Color lightBlue = Color(0xFFF4F9FF);
   static const Color navbarDisable = Color(0xFFC4C4C4);
 

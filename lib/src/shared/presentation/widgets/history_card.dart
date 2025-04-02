@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_badge.dart';
 
 class HistoryCard extends StatelessWidget {
   const HistoryCard({super.key});
@@ -65,24 +66,7 @@ class HistoryCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                      color: DefaultColors.lightBlueBadge,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 4,
-                      horizontal: 10,
-                    ),
-                    child: Text(
-                      'Tidak Bahaya',
-                      style: TextStyle(
-                        fontSize: FontSize.medium,
-                        color: DefaultColors.darkBlueBadge,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
+                  CustomBadge(label: 'Tidak Bahaya', style: BadgeStyle.none),
                 ],
               ),
             ),
