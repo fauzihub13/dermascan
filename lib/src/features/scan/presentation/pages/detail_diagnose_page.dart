@@ -10,8 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class DetailDiagnosePage extends StatefulWidget {
-  final CroppedFile image;
-  const DetailDiagnosePage({super.key, required this.image});
+  final String imagePath;
+  const DetailDiagnosePage({super.key, required this.imagePath});
 
   @override
   State<DetailDiagnosePage> createState() => _DetailDiagnosePageState();
@@ -35,6 +35,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
 
   @override
   Widget build(BuildContext context) {
+    CroppedFile croppedFile = CroppedFile(widget.imagePath);
     return Scaffold(
       appBar: CustomAppbar(title: 'Detail Diagnosa', canBack: true),
       body: SafeArea(
@@ -51,17 +52,11 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image(
-                    image: FileImage(File(widget.image.path)),
+                    image: FileImage(File(croppedFile.path)),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                     fit: BoxFit.cover,
                   ),
-                  // Image.asset(
-                  //   'assets/images/hand_disease.jpg',
-                  //   width: MediaQuery.of(context).size.width,
-                  //   height: MediaQuery.of(context).size.width,
-                  //   fit: BoxFit.cover,
-                  // ),
                 ),
                 const SizedBox(height: 12),
                 Text(

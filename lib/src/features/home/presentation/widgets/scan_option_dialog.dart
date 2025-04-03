@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/scan/presentation/pages/detail_diagnose_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -29,16 +30,9 @@ class _ScanOptionDialogState extends State<ScanOptionDialog> {
       final croppedImage = await cropImages(image);
 
       if (croppedImage != null && mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return DetailDiagnosePage(image: croppedImage);
-            },
-          ),
-        );
-      } else if (mounted){
-        Navigator.pop(context);
+        context.pushNamed(RouteName.detailDiagnosePage, extra: croppedImage.path);
+      } else if (mounted) {
+        context.pop(context);
       } else {
         return;
       }

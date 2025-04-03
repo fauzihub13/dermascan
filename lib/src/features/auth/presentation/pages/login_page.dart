@@ -103,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                             status: 'success',
                           );
                           context.pushNamed(RouteName.landingPage);
+                         
                         } else {
                           CustomSnackbar.show(
                             context,

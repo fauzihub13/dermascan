@@ -7,6 +7,7 @@ import 'package:flutter_dermascan/src/features/profile/presentation/pages/change
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/detail_history_page.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/history_page.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/pages/detail_diagnose_page.dart';
 import 'package:go_router/go_router.dart';
 
 class RoutePage {
@@ -54,14 +55,14 @@ class RoutePage {
         builder: (context, state) => WelcomePage(),
       ),
 
-      // GoRoute(
-      //   name: RouteName.diagnoseHistoryPage,
-      //   path: '/${RouteName.diagnoseHistoryPage}',
-      //   builder: (context, state) {
-      //     final id = state.extra['id'];
-      //     return DetailDiagnosePage(image: CroppedFile(''));
-      //   },
-      // ),
+      GoRoute(
+        name: RouteName.detailDiagnosePage,
+        path: '/${RouteName.detailDiagnosePage}',
+        builder: (context, state) {
+          final filePath = state.extra as String;
+          return DetailDiagnosePage(imagePath: filePath);
+        },
+      ),
     ],
   );
 }

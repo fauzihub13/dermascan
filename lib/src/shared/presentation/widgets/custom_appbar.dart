@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -53,7 +54,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                           if (onTap != null) {
                             onTap!();
                           } else {
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
+                            context.pop(context);
                           }
                         },
                       ),
