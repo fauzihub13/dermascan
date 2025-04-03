@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 class DetailDiagnosePage extends StatefulWidget {
-  const DetailDiagnosePage({super.key});
+  final CroppedFile image;
+  const DetailDiagnosePage({super.key, required this.image});
 
   @override
   State<DetailDiagnosePage> createState() => _DetailDiagnosePageState();
@@ -45,12 +49,18 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    'assets/images/hand_disease.jpg',
+                  child: Image(
+                    image: FileImage(File(widget.image.path)),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                     fit: BoxFit.cover,
                   ),
+                  // Image.asset(
+                  //   'assets/images/hand_disease.jpg',
+                  //   width: MediaQuery.of(context).size.width,
+                  //   height: MediaQuery.of(context).size.width,
+                  //   fit: BoxFit.cover,
+                  // ),
                 ),
                 const SizedBox(height: 12),
                 Text(

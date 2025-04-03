@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/pages/home_page.dart';
+import 'package:flutter_dermascan/src/features/home/presentation/widgets/scan_option_dialog.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/profile_page.dart';
-import 'package:flutter_dermascan/src/features/scan/presentation/pages/detail_diagnose_page.dart';
 import 'package:flutter_svg/svg.dart';
 
 class LandingPage extends StatefulWidget {
@@ -44,14 +44,20 @@ class _LandingPageState extends State<LandingPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) {
-                return DetailDiagnosePage();
-              },
-            ),
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogConctext) {
+              return ScanOptionDialog();
+            },
           );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (BuildContext context) {
+          //       return ScanImagePage();
+          //     },
+          //   ),
+          // );
         },
         child: Container(
           decoration: BoxDecoration(shape: BoxShape.circle),
