@@ -50,14 +50,6 @@ class _LandingPageState extends State<LandingPage> {
               return ScanOptionDialog();
             },
           );
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (BuildContext context) {
-          //       return ScanImagePage();
-          //     },
-          //   ),
-          // );
         },
         child: Container(
           decoration: BoxDecoration(shape: BoxShape.circle),

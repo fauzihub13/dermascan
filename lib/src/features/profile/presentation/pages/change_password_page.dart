@@ -5,6 +5,7 @@ import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_label.dart';
+import 'package:go_router/go_router.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -132,7 +133,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       message: 'Berhasil ubah profil',
                       status: 'success',
                     );
-                    Navigator.pop(context);
+                    context.pop();
                   } else {
                     CustomSnackbar.show(
                       context,

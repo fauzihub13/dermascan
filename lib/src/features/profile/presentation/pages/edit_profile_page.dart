@@ -5,6 +5,7 @@ import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_label.dart';
+import 'package:go_router/go_router.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -72,7 +73,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       message: 'Berhasil ubah profil',
                       status: 'success',
                     );
-                    Navigator.pop(context);
+                    context.pop();
                   } else {
                     CustomSnackbar.show(
                       context,

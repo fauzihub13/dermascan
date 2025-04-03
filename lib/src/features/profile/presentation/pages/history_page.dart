@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/profile/presentation/pages/detail_history_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/history_card.dart';
+import 'package:go_router/go_router.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -43,14 +44,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   itemBuilder: (context, index) {
                     return HistoryCard(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return DetailHistoryPage();
-                            },
-                          ),
-                        );
+                        context.pushNamed(RouteName.diagnoseDetailHistoryPage);
                       },
                     );
                   },

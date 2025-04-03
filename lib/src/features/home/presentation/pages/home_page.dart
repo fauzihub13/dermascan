@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_list.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_statistic_card.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/main_appbar.dart';
-import 'package:flutter_dermascan/src/features/profile/presentation/pages/history_page.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,14 +33,7 @@ class _HomePageState extends State<HomePage> {
               Image.asset('assets/images/banner.png'),
               HistoryStatisticCard(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return HistoryPage();
-                      },
-                    ),
-                  );
+                  context.pushNamed(RouteName.diagnoseHistoryPage);
                 },
                 count: 2,
                 lastCheck: '20 hari yang lalu',

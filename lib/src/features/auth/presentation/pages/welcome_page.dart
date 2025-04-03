@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/auth/presentation/pages/login_page.dart';
-import 'package:flutter_dermascan/src/features/auth/presentation/pages/register_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
+import 'package:go_router/go_router.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -71,15 +71,7 @@ class WelcomePage extends StatelessWidget {
                     const Spacer(),
                     CustomButton.filled(
                       onPressed: () {
-                        // print('click');
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) {
-                              return const LoginPage();
-                            },
-                          ),
-                        );
+                        context.pushNamed(RouteName.loginPage);
                       },
                       label: 'Masuk',
                     ),
@@ -104,14 +96,7 @@ class WelcomePage extends StatelessWidget {
                             minimumSize: Size(0, 0),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return const RegisterPage();
-                                },
-                              ),
-                            );
+                            context.pushNamed(RouteName.registerPage);
                           },
                           child: Text(
                             'Daftar',

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/auth/presentation/pages/register_page.dart';
-import 'package:flutter_dermascan/src/features/home/presentation/pages/landing_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_label.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -102,14 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                             message: 'Berhasil masuk',
                             status: 'success',
                           );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return LandingPage();
-                              },
-                            ),
-                          );
+                          context.pushNamed(RouteName.landingPage);
                         } else {
                           CustomSnackbar.show(
                             context,
@@ -142,14 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                             minimumSize: Size(0, 0),
                           ),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return const RegisterPage();
-                                },
-                              ),
-                            );
+                            context.pushNamed(RouteName.registerPage);
                           },
                           child: Text(
                             'Daftar',

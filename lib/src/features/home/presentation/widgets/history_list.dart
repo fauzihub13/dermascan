@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dermascan/src/features/profile/presentation/pages/detail_history_page.dart';
-import 'package:flutter_dermascan/src/features/profile/presentation/pages/history_page.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/history_card.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/title_section.dart';
+import 'package:go_router/go_router.dart';
 
 class HistoryList extends StatelessWidget {
   final int count;
@@ -15,14 +15,7 @@ class HistoryList extends StatelessWidget {
         TitleSection(
           title: 'Riwayat Diagnosa',
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return HistoryPage();
-                },
-              ),
-            );
+            context.pushNamed(RouteName.diagnoseHistoryPage);
           },
         ),
 
@@ -35,14 +28,8 @@ class HistoryList extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: HistoryCard(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return DetailHistoryPage();
-                      },
-                    ),
-                  );
+                  context.pushNamed(RouteName.diagnoseDetailHistoryPage);
+
                 },
               ),
             );

@@ -6,6 +6,7 @@ import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_di
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 class DetailDiagnosePage extends StatefulWidget {
@@ -165,7 +166,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                         message: 'Berhasil meyimpan',
                         status: 'success',
                       );
-                      Navigator.pop(dialogContext);
+                      context.pop();
                     },
                     onChanged: (value) {
                       setState(() {
