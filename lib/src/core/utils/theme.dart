@@ -7,6 +7,7 @@ class FontSize {
   static const standardUp = 16.0;
   static const standardUp2 = 18.0;
   static const large = 26.0;
+  static const diseaseName = 20.0;
 }
 
 class PaddingSize {
@@ -71,16 +72,16 @@ class DefaultColors {
 
   static const Color darkBlueBadge = Color(0xFF0165FC);
   static const Color lightBlueBadge = Color(0xffE0EBFF);
-
-
 }
 
 class AppTheme {
   static ThemeData get light {
     return ThemeData(
+      useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: DefaultColors.primaryColor,
       scaffoldBackgroundColor: DefaultColors.lightScaffoldBackground,
+
       textTheme: TextTheme(
         titleLarge: TextStyle(
           fontSize: FontSize.large,
@@ -144,6 +145,17 @@ class AppTheme {
         selectionHandleColor: DefaultColors.primaryColor,
       ),
       buttonTheme: ButtonThemeData(buttonColor: DefaultColors.primaryColor),
+      tabBarTheme: TabBarThemeData(
+        splashFactory: InkRipple.splashFactory,
+        overlayColor: WidgetStateProperty.resolveWith<Color?>((
+          Set<WidgetState> states,
+        ) {
+          return states.contains(WidgetState.focused)
+              ? null
+              : DefaultColors.lightBlue;
+        }),
+      ),
+      dialogTheme: DialogThemeData(backgroundColor: DefaultColors.white),
     );
   }
 }

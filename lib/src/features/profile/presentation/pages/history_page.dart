@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/profile/presentation/pages/detail_history_page.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/history_card.dart';
@@ -40,7 +41,18 @@ class _HistoryPageState extends State<HistoryPage> {
                   },
                   itemCount: 10,
                   itemBuilder: (context, index) {
-                    return GestureDetector(onTap: () {}, child: HistoryCard());
+                    return HistoryCard(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return DetailHistoryPage();
+                            },
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),

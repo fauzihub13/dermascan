@@ -3,12 +3,13 @@ import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_badge.dart';
 
 class HistoryCard extends StatelessWidget {
-  const HistoryCard({super.key});
+  final VoidCallback onPressed;
+  const HistoryCard({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(

@@ -1,0 +1,1 @@
+Declare abstract class of function, then overrided by data/repository
