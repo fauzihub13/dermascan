@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 
 class RoutePage {
   GoRouter router = GoRouter(
-    initialLocation: '/${RouteName.welcomePage}',
+    initialLocation: '/',
     routes: [
       GoRoute(
         name: RouteName.landingPage,

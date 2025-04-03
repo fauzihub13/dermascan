@@ -14,6 +14,7 @@ class ScanOptionDialog extends StatefulWidget {
 }
 
 class _ScanOptionDialogState extends State<ScanOptionDialog> {
+  
   void pickImage({required bool pickGalleryImage}) async {
     XFile? image;
     final picker = ImagePicker();
@@ -30,7 +31,10 @@ class _ScanOptionDialogState extends State<ScanOptionDialog> {
       final croppedImage = await cropImages(image);
 
       if (croppedImage != null && mounted) {
-        context.pushNamed(RouteName.detailDiagnosePage, extra: croppedImage.path);
+        context.pushNamed(
+          RouteName.detailDiagnosePage,
+          extra: croppedImage.path,
+        );
       } else if (mounted) {
         context.pop(context);
       } else {
