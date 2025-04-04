@@ -1,16 +1,16 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dermascan/src/core/utils/constant.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
+import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
+import 'package:flutter_dermascan/src/features/scan/domain/repositories/classification_repository.dart';
+import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -32,155 +32,65 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
   // MODEL
   Interpreter? interpreter;
   List<String> labels = [];
-  List<Map<String, dynamic>> topResults = []; // Simpan hasil klasifikasi
+  List<Map<String, dynamic>> topResults = [];
+  List<Map<String, dynamic>> classifiedResults = [];
+
+  late ClassificationRepository classificationRepository;
+  late ClassifyImageUseCase classifyImageUseCase;
+  bool isModelLoaded = false; // Untuk tracking apakah model berhasil dimuat
 
   @override
   void initState() {
-    _initializeModel();
     tabController = TabController(length: 4, vsync: this);
     tabController.addListener(() {
       setState(() {});
     });
+
+    _initClassification();
     super.initState();
   }
 
-  Future<void> _initializeModel() async {
-    await _loadModel();
-    await _loadLabels();
-    await classifyImage(
-      widget.imagePath,
-    ); // Pastikan model sudah siap sebelum klasifikasi
-  }
+  Future<void> _initClassification() async {
+    final dataSource = ClassificationImageDataSource();
+    classificationRepository = ClassificationRepositoryImpl(dataSource);
+    classifyImageUseCase = ClassifyImageUseCase(classificationRepository);
 
-  // FIXED: DO NOT CHANGE THIS FUNCTION
-  Future<void> _loadModel() async {
-    try {
-      final options = InterpreterOptions();
-      options.addDelegate(XNNPackDelegate());
-      // options.addDelegate(GpuDelegateV2());
-
-      interpreter = await Interpreter.fromAsset(
-        Constant.modelPath,
-        options: options,
-      );
-      print('✅ Model loaded successfully!');
-
-      // Get tensor input shape [1, 224, 224, 3]
-      print(interpreter!.getInputTensors().first);
-
-      // Get tensor output shape [1, 23]
-      print(interpreter!.getOutputTensors().first);
-    } catch (e) {
-      print('❌ Error loading model: $e');
-    }
-  }
-
-  // FIXED: DO NOT CHANGE THIS FUNCTION
-  Future<void> _loadLabels() async {
-    try {
-      final labelTxt = await rootBundle.loadString(Constant.labelsPath);
-      labels = labelTxt.split('\n').where((label) => label.isNotEmpty).toList();
-      print('✅ Labels loaded successfully! Total labels: ${labels.length}');
-    } catch (e) {
-      print('❌ Error loading labels: $e');
-    }
-  }
-
-  // FIXED: DO NOT CHANGE THIS FUNCTION
-  List<Map<String, dynamic>> getTopKClasses(List<double> scores, int k) {
-    List<Map<String, dynamic>> indexedScores = List.generate(
-      scores.length,
-      (i) => {'index': i, 'score': scores[i]},
+    // Load model dan label sebelum klasifikasi
+    final initResult = await classificationRepository.init();
+    initResult.fold(
+      (failure) {
+        print("❌ Failed to load model/labels: ${failure.message}");
+      },
+      (_) {
+        print("✅ Model and labels loaded successfully!");
+        setState(() {
+          isModelLoaded = true; // Update UI jika model berhasil dimuat
+        });
+        _classifyImage();
+      },
     );
-
-    // Sort by confidence score (Descending order)
-    indexedScores.sort((a, b) => b['score'].compareTo(a['score']));
-
-    return indexedScores.take(k).toList();
   }
 
-  // Classify an image
-  Future<void> classifyImage(String imagePath) async {
-    if (interpreter == null || labels.isEmpty) {
-      print("❌ Model or labels not loaded yet!");
+  Future<void> _classifyImage() async {
+    if (!isModelLoaded) {
+      print("⚠️ Model not loaded yet!");
       return;
     }
 
-    try {
-      // Load and preprocess image
-      img.Image? image = img.decodeImage(File(imagePath).readAsBytesSync());
-      if (image == null) {
-        print("❌ Error decoding image!");
-        return;
-      }
+    String imagePath = widget.imagePath; // Ganti dengan path gambar yang valid
+    final result = await classifyImageUseCase.call(imagePath);
 
-      img.Image resizedImage = img.copyResize(image, width: 224, height: 224);
-      Uint8List input = imageToByteListFloat32(resizedImage, 224, 224, 3);
-
-      // ✅ Ensure Correct Input Shape
-      final inputTensor = interpreter!.getInputTensor(0);
-      print("🔥 Expected input shape: ${inputTensor.shape}"); // Debug
-
-      if (inputTensor.shape.length != 4 ||
-          inputTensor.shape[1] != 224 ||
-          inputTensor.shape[2] != 224 ||
-          inputTensor.shape[3] != 3) {
-        print("❌ Input shape mismatch: Expected [1, 224, 224, 3]");
-        return;
-      }
-
-      // Get output tensor shape
-      var outputShape = interpreter!.getOutputTensor(0).shape;
-      int numClasses = outputShape[1];
-
-      // Prepare output buffer
-      final output = List<List<double>>.generate(
-        1,
-        (_) => List.filled(numClasses, 0.0),
-      );
-
-      // Run inference
-      interpreter!.run(input, output);
-
-      // Process results
-      final scores = output[0];
-      topResults = getTopKClasses(scores, 3);
-
-      for (var result in topResults) {
-        int index = result['index'];
-        if (index < labels.length) {
-          print("📌 Label: ${labels[index]}");
-          print(
-            "🎯 Confidence: ${(result['score'] * 100).toStringAsFixed(2)}%\n",
-          );
-        } else {
-          print("⚠️ Warning: Index out of range (${result['index']})");
-        }
-      }
-    } catch (e) {
-      print("❌ Error during classification: $e");
-    }
-  }
-
-  // Convert image to Float32 byte list
-  Uint8List imageToByteListFloat32(
-    img.Image image,
-    int width,
-    int height,
-    int channels,
-  ) {
-    var buffer = Float32List(1 * width * height * channels);
-    int pixelIndex = 0;
-
-    for (int y = 0; y < height; y++) {
-      for (int x = 0; x < width; x++) {
-        img.Pixel pixel = image.getPixelSafe(x, y);
-        buffer[pixelIndex++] = pixel.r / 255.0;
-        buffer[pixelIndex++] = pixel.g / 255.0;
-        buffer[pixelIndex++] = pixel.b / 255.0;
-      }
-    }
-    return buffer.buffer.asUint8List();
+    result.fold(
+      (failure) {
+        print("❌ Classification failed: ${failure.message}");
+      },
+      (classificationResult) {
+        print("✅ Classification success: ${classificationResult.results}");
+        setState(() {
+          classifiedResults = classificationResult.results;
+        });
+      },
+    );
   }
 
   @override
@@ -210,9 +120,9 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  topResults.isNotEmpty
-                      ? labels[topResults.first['index']]
-                      : 'KOSONG: $topResults',
+                  classifiedResults.isNotEmpty
+                      ? classifiedResults.first['label']
+                      : '-',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: FontSize.diseaseName,
@@ -232,9 +142,9 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                       ),
                     ),
                     Text(
-                      topResults.isNotEmpty
-                          ? '${(topResults.first['score'] * 100).toStringAsFixed(2)}%'
-                          : '',
+                      classifiedResults.isNotEmpty
+                          ? '${classifiedResults.first['confidence'].toStringAsFixed(2)}%'
+                          : '0%',
                       maxLines: 1,
                       style: TextStyle(
                         fontSize: FontSize.standardUp,
