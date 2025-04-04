@@ -16,12 +16,12 @@ class _ScanImagePageState extends State<ScanImagePage> {
   int currentCameraIndex = 0;
 
   Future<void> _setupCameraController() async {
-    List<CameraDescription> _cameras = await availableCameras();
-    if (_cameras.isNotEmpty) {
+    List<CameraDescription> detectCameras = await availableCameras();
+    if (detectCameras.isNotEmpty) {
       setState(() {
-        cameras = _cameras;
+        cameras = detectCameras;
         cameraController = CameraController(
-          _cameras[currentCameraIndex],
+          detectCameras[currentCameraIndex],
           ResolutionPreset.high,
         );
       });
@@ -33,8 +33,7 @@ class _ScanImagePageState extends State<ScanImagePage> {
 
   Future<void> _switchCamera() async {
     if (cameras.isNotEmpty) {
-      currentCameraIndex =
-          (currentCameraIndex + 1) % cameras.length; 
+      currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
       if (cameraController != null) {
         await cameraController!.dispose();
       }

@@ -1,18 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
-import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/repositories/classification_repository.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/bloc/classify_image_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
 
 class DetailDiagnosePage extends StatefulWidget {
   final String imagePath;
@@ -30,9 +29,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
   String priority = '';
 
   // MODEL
-  Interpreter? interpreter;
-  List<String> labels = [];
-  List<Map<String, dynamic>> topResults = [];
+
   List<Map<String, dynamic>> classifiedResults = [];
 
   late ClassificationRepository classificationRepository;
@@ -45,51 +42,13 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
     tabController.addListener(() {
       setState(() {});
     });
-
-    _initClassification();
+    _classifyImage();
     super.initState();
   }
 
-  Future<void> _initClassification() async {
-    final dataSource = ClassificationImageDataSource();
-    classificationRepository = ClassificationRepositoryImpl(dataSource);
-    classifyImageUseCase = ClassifyImageUseCase(classificationRepository);
-
-    // Load model dan label sebelum klasifikasi
-    final initResult = await classificationRepository.init();
-    initResult.fold(
-      (failure) {
-        print("❌ Failed to load model/labels: ${failure.message}");
-      },
-      (_) {
-        print("✅ Model and labels loaded successfully!");
-        setState(() {
-          isModelLoaded = true; // Update UI jika model berhasil dimuat
-        });
-        _classifyImage();
-      },
-    );
-  }
-
   Future<void> _classifyImage() async {
-    if (!isModelLoaded) {
-      print("⚠️ Model not loaded yet!");
-      return;
-    }
-
-    String imagePath = widget.imagePath; // Ganti dengan path gambar yang valid
-    final result = await classifyImageUseCase.call(imagePath);
-
-    result.fold(
-      (failure) {
-        print("❌ Classification failed: ${failure.message}");
-      },
-      (classificationResult) {
-        print("✅ Classification success: ${classificationResult.results}");
-        setState(() {
-          classifiedResults = classificationResult.results;
-        });
-      },
+    context.read<ClassifyImageBloc>().add(
+      ClassifyImageEvent.classifyImage(imagePath: widget.imagePath),
     );
   }
 
@@ -119,17 +78,33 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  classifiedResults.isNotEmpty
-                      ? classifiedResults.first['label']
-                      : '-',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: FontSize.diseaseName,
-                    fontWeight: FontWeight.w600,
-                    color: DefaultColors.darkBlue,
-                  ),
+                BlocBuilder<ClassifyImageBloc, ClassifyImageState>(
+                  builder: (context, state) {
+                    String labelText = '-';
+                    switch (state) {
+                      case Loaded(:final classificationResultEntity):
+                        labelText =
+                            classificationResultEntity.results.isNotEmpty
+                                ? classificationResultEntity
+                                    .results
+                                    .first['label']
+                                : '-';
+                        break;
+                      default:
+                        labelText = '-';
+                    }
+                    return Text(
+                      labelText,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: FontSize.diseaseName,
+                        fontWeight: FontWeight.w600,
+                        color: DefaultColors.darkBlue,
+                      ),
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -141,16 +116,31 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                         color: DefaultColors.grey,
                       ),
                     ),
-                    Text(
-                      classifiedResults.isNotEmpty
-                          ? '${classifiedResults.first['confidence'].toStringAsFixed(2)}%'
-                          : '0%',
-                      maxLines: 1,
-                      style: TextStyle(
-                        fontSize: FontSize.standardUp,
-                        fontWeight: FontWeight.w600,
-                        color: DefaultColors.darkBlue,
-                      ),
+                    BlocBuilder<ClassifyImageBloc, ClassifyImageState>(
+                      builder: (context, state) {
+                        double accuracy = 0.0;
+                        switch (state) {
+                          case Loaded(:final classificationResultEntity):
+                            accuracy =
+                                classificationResultEntity.results.isNotEmpty
+                                    ? classificationResultEntity
+                                        .results
+                                        .first['confidence']
+                                    : 0.0;
+                            break;
+                          default:
+                            accuracy = 0.0;
+                        }
+                        return Text(
+                          '${accuracy.toStringAsFixed(2)}%',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: FontSize.standardUp,
+                            fontWeight: FontWeight.w600,
+                            color: DefaultColors.darkBlue,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

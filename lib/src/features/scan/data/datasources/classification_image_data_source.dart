@@ -22,10 +22,10 @@ class ClassificationImageDataSource {
         Constant.modelPath,
         options: options,
       );
-      print('✅ Model loaded successfully!');
+      // print('✅ Model loaded successfully!');
       return Right(null);
     } catch (e) {
-      print('❌ Error loading model: $e');
+      // print('❌ Error loading model: $e');
       return Left(Failure(message: e.toString()));
     }
   }
@@ -35,10 +35,10 @@ class ClassificationImageDataSource {
     try {
       final labelTxt = await rootBundle.loadString(Constant.labelsPath);
       labels = labelTxt.split('\n').where((label) => label.isNotEmpty).toList();
-      print('✅ Labels loaded successfully! Total labels: ${labels.length}');
+      // print('✅ Labels loaded successfully! Total labels: ${labels.length}');
       return Right(null);
     } catch (e) {
-      print('❌ Error loading labels: $e');
+      // print('❌ Error loading labels: $e');
       return Left(Failure(message: e.toString()));
     }
   }
@@ -60,7 +60,7 @@ class ClassificationImageDataSource {
         inputTensor.shape[1] != 224 ||
         inputTensor.shape[2] != 224 ||
         inputTensor.shape[3] != 3) {
-      print("❌ Input shape mismatch: Expected [1, 224, 224, 3]");
+      // print("❌ Input shape mismatch: Expected [1, 224, 224, 3]");
       return Left(
         Failure(message: "Input shape mismatch: Expected [1, 224, 224, 3]"),
       );
@@ -93,13 +93,13 @@ class ClassificationImageDataSource {
         String label = labels[index];
         double confidence = result['score'] * 100;
 
-        print("📌 Label: $label");
-        print("🎯 Confidence: ${confidence.toStringAsFixed(2)}%\n");
+        // print("📌 Label: $label");
+        // print("🎯 Confidence: ${confidence.toStringAsFixed(2)}%\n");
 
         // Tambahkan hasil ke list baru
         classifiedResults.add({'label': label, 'confidence': confidence});
       } else {
-        print("⚠️ Warning: Index out of range (${result['index']})");
+        // print("⚠️ Warning: Index out of range (${result['index']})");
       }
     }
 
