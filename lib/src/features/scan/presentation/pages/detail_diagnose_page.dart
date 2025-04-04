@@ -10,6 +10,7 @@ import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -51,16 +52,30 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
     ); // Pastikan model sudah siap sebelum klasifikasi
   }
 
+  // FIXED: DO NOT CHANGE THIS FUNCTION
   Future<void> _loadModel() async {
     try {
-      interpreter = await Interpreter.fromAsset(Constant.modelPath);
+      final options = InterpreterOptions();
+      options.addDelegate(XNNPackDelegate());
+      // options.addDelegate(GpuDelegateV2());
+
+      interpreter = await Interpreter.fromAsset(
+        Constant.modelPath,
+        options: options,
+      );
       print('✅ Model loaded successfully!');
+
+      // Get tensor input shape [1, 224, 224, 3]
+      print(interpreter!.getInputTensors().first);
+
+      // Get tensor output shape [1, 23]
+      print(interpreter!.getOutputTensors().first);
     } catch (e) {
       print('❌ Error loading model: $e');
     }
   }
 
-  // Load labels from assets
+  // FIXED: DO NOT CHANGE THIS FUNCTION
   Future<void> _loadLabels() async {
     try {
       final labelTxt = await rootBundle.loadString(Constant.labelsPath);
@@ -71,6 +86,20 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
     }
   }
 
+  // FIXED: DO NOT CHANGE THIS FUNCTION
+  List<Map<String, dynamic>> getTopKClasses(List<double> scores, int k) {
+    List<Map<String, dynamic>> indexedScores = List.generate(
+      scores.length,
+      (i) => {'index': i, 'score': scores[i]},
+    );
+
+    // Sort by confidence score (Descending order)
+    indexedScores.sort((a, b) => b['score'].compareTo(a['score']));
+
+    return indexedScores.take(k).toList();
+  }
+
+  // Classify an image
   Future<void> classifyImage(String imagePath) async {
     if (interpreter == null || labels.isEmpty) {
       print("❌ Model or labels not loaded yet!");
@@ -78,19 +107,33 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
     }
 
     try {
-      // Read image as bytes
-      final Uint8List imageBytes = File(imagePath).readAsBytesSync();
+      // Load and preprocess image
+      img.Image? image = img.decodeImage(File(imagePath).readAsBytesSync());
+      if (image == null) {
+        print("❌ Error decoding image!");
+        return;
+      }
 
-      // Convert image to Float32 input tensor
-      final input = imageToByteListFloat32(imageBytes, 224, 224, 3);
+      img.Image resizedImage = img.copyResize(image, width: 224, height: 224);
+      Uint8List input = imageToByteListFloat32(resizedImage, 224, 224, 3);
 
-      // Ambil jumlah output classes dari model
+      // ✅ Ensure Correct Input Shape
+      final inputTensor = interpreter!.getInputTensor(0);
+      print("🔥 Expected input shape: ${inputTensor.shape}"); // Debug
+
+      if (inputTensor.shape.length != 4 ||
+          inputTensor.shape[1] != 224 ||
+          inputTensor.shape[2] != 224 ||
+          inputTensor.shape[3] != 3) {
+        print("❌ Input shape mismatch: Expected [1, 224, 224, 3]");
+        return;
+      }
+
+      // Get output tensor shape
       var outputShape = interpreter!.getOutputTensor(0).shape;
-      int numClasses = outputShape[1]; // Ambil jumlah kelas dari model
+      int numClasses = outputShape[1];
 
-      print('📌 Model expects $numClasses output classes');
-
-      // Prepare output buffer dengan ukuran yang sesuai
+      // Prepare output buffer
       final output = List<List<double>>.generate(
         1,
         (_) => List.filled(numClasses, 0.0),
@@ -101,26 +144,9 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
 
       // Process results
       final scores = output[0];
-      print('=================');
-      print(scores);
-      print('=================');
+      topResults = getTopKClasses(scores, 3);
 
-      // Pastikan jumlah kelas cocok dengan labels
-      if (labels.length != numClasses) {
-        print(
-          '⚠️ Warning: Model output classes ($numClasses) != Loaded labels (${labels.length})',
-        );
-      }
-
-      // Get top 3 predictions
-      final top3 = getTopKClasses(scores, 3);
-
-      setState(() {
-        topResults = top3;
-      });
-
-      // Print results
-      for (var result in top3) {
+      for (var result in topResults) {
         int index = result['index'];
         if (index < labels.length) {
           print("📌 Label: ${labels[index]}");
@@ -138,29 +164,23 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
 
   // Convert image to Float32 byte list
   Uint8List imageToByteListFloat32(
-    Uint8List imageBytes,
+    img.Image image,
     int width,
     int height,
     int channels,
   ) {
-    var buffer = Float32List(width * height * channels);
-    for (int i = 0; i < imageBytes.length && i < buffer.length; i++) {
-      buffer[i] = imageBytes[i] / 255.0; // Normalize pixel values to [0,1]
+    var buffer = Float32List(1 * width * height * channels);
+    int pixelIndex = 0;
+
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        img.Pixel pixel = image.getPixelSafe(x, y);
+        buffer[pixelIndex++] = pixel.r / 255.0;
+        buffer[pixelIndex++] = pixel.g / 255.0;
+        buffer[pixelIndex++] = pixel.b / 255.0;
+      }
     }
     return buffer.buffer.asUint8List();
-  }
-
-  // Get top K predictions
-  List<Map<String, dynamic>> getTopKClasses(List<double> scores, int k) {
-    List<Map<String, dynamic>> indexedScores = List.generate(
-      scores.length,
-      (i) => {'index': i, 'score': scores[i]},
-    );
-
-    // Sort by confidence score (Descending order)
-    indexedScores.sort((a, b) => b['score'].compareTo(a['score']));
-
-    return indexedScores.take(k).toList();
   }
 
   @override
@@ -190,9 +210,9 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                   topResults.isNotEmpty
+                  topResults.isNotEmpty
                       ? labels[topResults.first['index']]
-                      : '',
+                      : 'KOSONG: $topResults',
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: FontSize.diseaseName,
