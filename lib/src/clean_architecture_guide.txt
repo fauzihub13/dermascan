@@ -1,0 +1,18 @@
+
+-------------------------------------
+|      Clean Architecture Guide     |
+-------------------------------------
+
+Domain-Entity
+↓
+Data-Model
+↓
+Domain-Abstract Repository 
+↓
+Data-Repository Implement
+↓
+Domain-Usecase
+↓
+Data-Datasource
+↓
+Presentation-BLoC
