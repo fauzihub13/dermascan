@@ -1,1 +1,0 @@
-Handle reponse from API fromJson and toJson
