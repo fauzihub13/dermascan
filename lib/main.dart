@@ -6,6 +6,7 @@ import 'package:flutter_dermascan/src/features/auth/data/datasources/auth_remote
 import 'package:flutter_dermascan/src/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/logout_use_case.dart';
+import 'package:flutter_dermascan/src/features/auth/domain/usecases/register_use_case.dart';
 import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
@@ -30,6 +31,11 @@ void main() async {
           authRemoteDataSource: AuthRemoteDataSource(),
         ),
       ),
+      registerUseCase: RegisterUseCase(
+        authRepository: AuthRepositoryImpl(
+          authRemoteDataSource: AuthRemoteDataSource(),
+        ),
+      ),
     ),
   );
 }
@@ -38,11 +44,13 @@ class MyApp extends StatelessWidget {
   final ClassificationRepositoryImpl classificationRepository;
   final LoginUseCase loginUseCase;
   final LogoutUseCase logoutUseCase;
+  final RegisterUseCase registerUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
     required this.loginUseCase,
     required this.logoutUseCase,
+    required this.registerUseCase,
   });
 
   @override
@@ -56,7 +64,9 @@ class MyApp extends StatelessWidget {
               ),
         ),
         BlocProvider(
-          create: (context) => AuthBloc(loginUseCase, logoutUseCase),
+          create:
+              (context) =>
+                  AuthBloc(loginUseCase, logoutUseCase, registerUseCase),
         ),
       ],
       child: MaterialApp.router(

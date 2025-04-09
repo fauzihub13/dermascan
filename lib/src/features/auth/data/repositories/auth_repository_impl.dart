@@ -34,8 +34,13 @@ class AuthRepositoryImpl extends AuthRepository {
     required String email,
     required String password,
     required String passwordConfirmation,
-  }) {
-    // TODO: implement register
-    throw UnimplementedError();
+  }) async {
+    final result = await _authRemoteDataSource.register(
+      name: name,
+      email: email,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+    );
+    return result;
   }
 }

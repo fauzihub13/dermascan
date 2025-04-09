@@ -23,7 +23,36 @@ class AuthRemoteDataSource {
     }
   }
 
-Future<Either<Failure, String>> logout() async {
+  Future<Either<Failure, String>> register({
+    required String name,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final response = await _apiService.request(
+      endpoint: '/register',
+      method: DioMethod.post,
+      param: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      },
+    );
+    if (response.statusCode == 200) {
+      return Right(response.data['message']);
+    } else if (response.statusCode == 422) {
+      final errors = response.data['errors'];
+      final errorMessages = errors.entries
+          .map((entry) => '${entry.value.join(", ")}')
+          .join("\n");
+      return Left(Failure(message: errorMessages));
+    } else {
+      return Left(Failure(message: response.data['message']));
+    }
+  }
+
+  Future<Either<Failure, String>> logout() async {
     final response = await _apiService.request(
       endpoint: '/logout',
       method: DioMethod.post,
@@ -34,5 +63,4 @@ Future<Either<Failure, String>> logout() async {
       return Left(Failure(message: response.data['message']));
     }
   }
-
 }

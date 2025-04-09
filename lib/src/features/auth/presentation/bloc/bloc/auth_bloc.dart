@@ -5,6 +5,7 @@ import 'package:flutter_dermascan/src/features/auth/data/models/user_model.dart'
 import 'package:flutter_dermascan/src/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/logout_use_case.dart';
+import 'package:flutter_dermascan/src/features/auth/domain/usecases/register_use_case.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_bloc.freezed.dart';
@@ -14,7 +15,9 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase loginUseCase;
   final LogoutUseCase logoutUseCase;
-  AuthBloc(this.loginUseCase, this.logoutUseCase) : super(AuthState.initial()) {
+  final RegisterUseCase registerUseCase;
+  AuthBloc(this.loginUseCase, this.logoutUseCase, this.registerUseCase)
+    : super(AuthState.initial()) {
     on<Login>((event, emit) async {
       emit(Loading());
       final result = await loginUseCase.call(event.email, event.password);
@@ -23,6 +26,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await AuthLocalHelper().saveAuthData(userModel);
         emit(SuccessLogin(success));
       });
+    });
+    on<Register>((event, emit) async {
+      emit(Loading());
+      final result = await registerUseCase.call(
+        event.name,
+        event.email,
+        event.password,
+        event.passwordConfirmation,
+      );
+      result.fold(
+        (error) {
+          emit(Error(error));
+        },
+        (success) {
+          emit(SuccessRegister());
+        },
+      );
     });
 
     on<Logout>((event, emit) async {
