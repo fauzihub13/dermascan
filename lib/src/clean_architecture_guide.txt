@@ -9,10 +9,10 @@ Data-Model
 ↓
 Domain-Abstract Repository 
 ↓
+Data-Datasource
+↓
 Data-Repository Implement
 ↓
 Domain-Usecase
-↓
-Data-Datasource
 ↓
 Presentation-BLoC

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';
@@ -94,26 +96,41 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const SizedBox(height: 60),
-                    CustomButton.filled(
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          CustomSnackbar.show(
-                            context,
-                            message: 'Berhasil masuk',
-                            status: 'success',
-                          );
-                          context.pushNamed(RouteName.landingPage);
-                         
-                        } else {
-                          CustomSnackbar.show(
-                            context,
-                            message:
-                                'Gagal masuk ke akun, periksa kembali email dan kata sandi.',
-                            status: 'fail',
-                          );
+                    BlocConsumer<AuthBloc, AuthState>(
+                      listener: (context, state) {
+                        switch (state) {
+                          case SuccessLogin(:final userEntity):
+                            CustomSnackbar.show(
+                              context,
+                              message:
+                                  'Berhasil masuk sebagai ${userEntity.name}',
+                              status: 'success',
+                            );
+                            context.pushNamed(RouteName.landingPage);
+                          case Error(:final failure):
+                            CustomSnackbar.show(
+                              context,
+                              message:
+                                  'Gagal masuk ke akun, ${failure.message}',
+                              status: 'fail',
+                            );
                         }
                       },
-                      label: 'Masuk',
+                      builder: (context, state) {
+                        return CustomButton.filled(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              context.read<AuthBloc>().add(
+                                AuthEvent.login(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
+                            }
+                          },
+                          label: 'Masuk',
+                        );
+                      },
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

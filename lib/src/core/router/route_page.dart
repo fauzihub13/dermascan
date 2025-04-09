@@ -11,8 +11,8 @@ import 'package:flutter_dermascan/src/features/scan/presentation/pages/detail_di
 import 'package:go_router/go_router.dart';
 
 class RoutePage {
-  GoRouter router = GoRouter(
-    initialLocation: '/',
+ static final GoRouter router = GoRouter(
+    initialLocation: '/${RouteName.loginPage}',
     routes: [
       GoRoute(
         name: RouteName.landingPage,
