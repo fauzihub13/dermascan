@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
+import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
@@ -106,7 +107,9 @@ class _LoginPageState extends State<LoginPage> {
                                   'Berhasil masuk sebagai ${userEntity.name}',
                               status: 'success',
                             );
-                            context.pushNamed(RouteName.landingPage);
+                            RoutePage.isLoggedIn = true;
+                            context.goNamed(RouteName.landingPage);
+                            break;
                           case Error(:final failure):
                             CustomSnackbar.show(
                               context,
@@ -114,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                                   'Gagal masuk ke akun, ${failure.message}',
                               status: 'fail',
                             );
+                            break;
                         }
                       },
                       builder: (context, state) {

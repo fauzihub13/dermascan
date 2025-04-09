@@ -44,6 +44,7 @@ class ApiService {
         onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401) {
             await authLocalHelper.removeAuthData();
+            RoutePage.isLoggedIn = false;
             RoutePage.router.goNamed(RouteName.loginPage);
           }
           return handler.next(e);

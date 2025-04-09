@@ -9,7 +9,7 @@ class AuthRepositoryImpl extends AuthRepository {
 
   AuthRepositoryImpl({required AuthRemoteDataSource authRemoteDataSource})
     : _authRemoteDataSource = authRemoteDataSource;
-    
+
   @override
   Future<Either<Failure, UserEntity>> login({
     required String email,
@@ -23,9 +23,9 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> logout() {
-    // TODO: implement logout
-    throw UnimplementedError();
+  Future<Either<Failure, String>> logout() async {
+    final result = await _authRemoteDataSource.logout();
+    return result;
   }
 
   @override

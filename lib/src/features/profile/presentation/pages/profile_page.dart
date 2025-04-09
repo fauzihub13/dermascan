@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
+import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_card.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_row.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/label_action_card.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -79,14 +83,40 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             LabelActionCard(label: 'PENGATURAN'),
-            ActionCard(
-              list: [
-                ActionRow(
-                  label: 'Keluar',
-                  icon: Icons.logout,
-                  onPressed: () {},
-                ),
-              ],
+            BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                switch (state) {
+                  case SuccessLogout():
+                    CustomSnackbar.show(
+                      context,
+                      message: 'Berhasil keluar akun.',
+                      status: 'success',
+                    );
+                    RoutePage.isLoggedIn = false;
+                    context.goNamed(RouteName.loginPage);
+                    break;
+                  case Error(:final failure):
+                    CustomSnackbar.show(
+                      context,
+                      message: '${failure.message}',
+                      status: 'fail',
+                    );
+                    break;
+                }
+              },
+              builder: (context, state) {
+                return ActionCard(
+                  list: [
+                    ActionRow(
+                      label: 'Keluar',
+                      icon: Icons.logout,
+                      onPressed: () {
+                        context.read<AuthBloc>().add(AuthEvent.logout());
+                      },
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),

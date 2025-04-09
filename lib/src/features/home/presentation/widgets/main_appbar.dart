@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 
 class MainAppbar extends StatelessWidget {
-  const MainAppbar({super.key});
+  final String name;
+  const MainAppbar({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class MainAppbar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Jane Evelyn',
+                    name,
                     maxLines: 1,
                     style: TextStyle(
                       fontSize: FontSize.standardUp,

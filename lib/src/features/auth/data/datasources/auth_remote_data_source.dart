@@ -22,4 +22,17 @@ class AuthRemoteDataSource {
       return Left(Failure(message: response.data['message']));
     }
   }
+
+Future<Either<Failure, String>> logout() async {
+    final response = await _apiService.request(
+      endpoint: '/logout',
+      method: DioMethod.post,
+    );
+    if (response.statusCode == 200) {
+      return Right(response.data['message']);
+    } else {
+      return Left(Failure(message: response.data['message']));
+    }
+  }
+
 }

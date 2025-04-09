@@ -19,17 +19,55 @@ class UserModel extends UserEntity {
   }
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
-    Map<String, dynamic> user = json['user'];
+    if (json.containsKey('user')) {
+      Map<String, dynamic> user = json['user'];
+      return UserModel(
+        id: user['id'],
+        name: user['name'],
+        email: user['email'],
+        emailVerifiedAt: user['emailVerifiedAt'],
+        createdAt: DateTime.parse(user["created_at"]),
+        updatedAt: DateTime.parse(user["updated_at"]),
+        role: user['role'],
+        token: json['token'],
+      );
+    } else {
+      return UserModel(
+        id: json['id'],
+        name: json['name'],
+        email: json['email'],
+        emailVerifiedAt: json['email_verified_at'],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        role: json['role'],
+        token: json['token'],
+      );
+    }
+  }
+
+  factory UserModel.fromEntity(UserEntity entity) {
     return UserModel(
-      id: user['id'],
-      name: user['name'],
-      email: user['email'],
-      emailVerifiedAt: user['emailVerifiedAt'],
-      createdAt:  DateTime.parse(user["created_at"]),
-      updatedAt: DateTime.parse(user["updated_at"]),
-      role: user['role'],
-      token: json['token'],
-      
+      id: entity.id,
+      name: entity.name,
+      email: entity.email,
+      emailVerifiedAt: entity.emailVerifiedAt,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      role: entity.role,
+      token: entity.token,
+    );
+  }
+
+  UserEntity toEntity() {
+    return UserEntity(
+      id: id,
+      name: name,
+      email: email,
+      emailVerifiedAt: emailVerifiedAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      role: role,
+      token: token,
     );
   }
 
@@ -43,5 +81,6 @@ class UserModel extends UserEntity {
     "email_verified_at": emailVerifiedAt,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
+    "token": token,
   };
 }

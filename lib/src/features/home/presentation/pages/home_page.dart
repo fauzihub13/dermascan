@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_list.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_statistic_card.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/main_appbar.dart';
@@ -14,12 +16,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  UserEntity? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadAuthData();
+  }
+
+  // Future<void> _refreshPage() async {
+  //   await _initializeData();
+  // }
+
+  Future<void> _loadAuthData() async {
+    final authData = await AuthLocalHelper().getAuthData();
+    // print(authData);
+    setState(() {
+      user = authData.toEntity();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: MainAppbar(),
+        child: MainAppbar(name: user == null ? '-' : user!.name),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(
