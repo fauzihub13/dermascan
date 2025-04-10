@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_card.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_row.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/label_action_card.dart';
-import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +20,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  UserEntity? user;
 
   @override
   void initState() {
@@ -30,14 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _initializeData() async {
-    await _loadAuthData();
-  }
-
-  Future<void> _loadAuthData() async {
-    final authData = await AuthLocalHelper().getAuthData();
-    setState(() {
-      user = authData.toEntity();
-    });
+    context.read<LocalAuthBloc>().add(LocalAuthEvent.getLocalAuth());
   }
 
   @override
@@ -69,13 +60,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            Text(
-              user == null ? '-' : user!.name,
-              style: TextStyle(
-                fontSize: FontSize.standardUp2,
-                fontWeight: FontWeight.w500,
-                color: DefaultColors.darkBlue,
-              ),
+            BlocConsumer<LocalAuthBloc, LocalAuthState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                String name = '-';
+                switch (state) {
+                  case SuccesGetLocalAuth(:final userEntity):
+                    name = userEntity.name;
+                    break;
+                }
+                return Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: FontSize.standardUp2,
+                    fontWeight: FontWeight.w500,
+                    color: DefaultColors.darkBlue,
+                  ),
+                );
+              },
             ),
             LabelActionCard(label: 'AKUN'),
             ActionCard(

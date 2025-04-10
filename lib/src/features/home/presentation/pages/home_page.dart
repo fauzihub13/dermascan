@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_list.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_statistic_card.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/main_appbar.dart';
-import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserEntity? user;
 
   @override
   void initState() {
@@ -25,14 +24,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _initializeData() async {
-    await _loadAuthData();
-  }
-
-  Future<void> _loadAuthData() async {
-    final authData = await AuthLocalHelper().getAuthData();
-    setState(() {
-      user = authData.toEntity();
-    });
+    context.read<LocalAuthBloc>().add(LocalAuthEvent.getLocalAuth());
   }
 
   @override
@@ -40,7 +32,18 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
-        child: MainAppbar(name: user == null ? '-' : user!.name),
+        child: BlocConsumer<LocalAuthBloc, LocalAuthState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            String name = '-';
+            switch (state) {
+              case SuccesGetLocalAuth(:final userEntity):
+                name = userEntity.name;
+                break;
+            }
+            return MainAppbar(name: name);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(

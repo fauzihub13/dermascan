@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -17,6 +18,10 @@ import 'package:flutter_dermascan/src/features/scan/data/datasources/classificat
 import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/bloc/classify_image_bloc.dart';
+import 'package:flutter_dermascan/src/shared/data/repositories/local_auth_repository_impl.dart';
+import 'package:flutter_dermascan/src/shared/domain/usecases/get_local_auth_use_case.dart';
+import 'package:flutter_dermascan/src/shared/domain/usecases/save_local_auth_use_case.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
 
 void main() async {
   final ClassificationRepositoryImpl classificationRepository =
@@ -51,6 +56,16 @@ void main() async {
           profileDatasources: ProfileDatasources(),
         ),
       ),
+      getLocalAuthUseCase: GetLocalAuthUseCase(
+        localAuthRepository: LocalAuthRepositoryImpl(
+          authLocalHelper: AuthLocalHelper(),
+        ),
+      ),
+      saveLocalAuthUseCase: SaveLocalAuthUseCase(
+        localAuthRepository: LocalAuthRepositoryImpl(
+          authLocalHelper: AuthLocalHelper(),
+        ),
+      ),
     ),
   );
 }
@@ -62,6 +77,8 @@ class MyApp extends StatelessWidget {
   final RegisterUseCase registerUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
   final ChangePasswordUseCase changePasswordUseCase;
+  final GetLocalAuthUseCase getLocalAuthUseCase;
+  final SaveLocalAuthUseCase saveLocalAuthUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
@@ -70,6 +87,8 @@ class MyApp extends StatelessWidget {
     required this.registerUseCase,
     required this.updateProfileUseCase,
     required this.changePasswordUseCase,
+    required this.getLocalAuthUseCase,
+    required this.saveLocalAuthUseCase,
   });
 
   @override
@@ -91,6 +110,11 @@ class MyApp extends StatelessWidget {
           create:
               (context) =>
                   ProfileBloc(updateProfileUseCase, changePasswordUseCase),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  LocalAuthBloc(getLocalAuthUseCase, saveLocalAuthUseCase),
         ),
       ],
       child: MaterialApp.router(
