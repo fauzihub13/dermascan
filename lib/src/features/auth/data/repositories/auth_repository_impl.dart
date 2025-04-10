@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dermascan/src/core/network/failure.dart';
 import 'package:flutter_dermascan/src/features/auth/data/datasources/auth_remote_data_source.dart';
-import 'package:flutter_dermascan/src/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;

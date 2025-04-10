@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
@@ -125,24 +127,46 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 },
               ),
               const SizedBox(height: 60),
-              CustomButton.filled(
-                onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    CustomSnackbar.show(
-                      context,
-                      message: 'Berhasil ubah profil',
-                      status: 'success',
-                    );
-                    context.pop();
-                  } else {
-                    CustomSnackbar.show(
-                      context,
-                      message: 'Gagal ubah profil, silahkan coba kembali',
-                      status: 'fail',
-                    );
+              BlocConsumer<ProfileBloc, ProfileState>(
+                listener: (context, state) {
+                  switch (state) {
+                    case SuccessChangePassword(:final message):
+                      CustomSnackbar.show(
+                        context,
+                        message: message,
+                        status: 'success',
+                      );
+                      oldPasswordController.clear();
+                      newPasswordController.clear();
+                      confirmationPasswordController.clear();
+                      context.pop();
+                      break;
+                    case ErrorChangePassword(:final failure):
+                      CustomSnackbar.show(
+                        context,
+                        message: '${failure.message}',
+                        status: 'fail',
+                      );
+                      break;
                   }
                 },
-                label: 'Simpan',
+                builder: (context, state) {
+                  return CustomButton.filled(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        context.read<ProfileBloc>().add(
+                          ProfileEvent.changePassword(
+                            oldPassword: oldPasswordController.text,
+                            newPassword: newPasswordController.text,
+                            passwordConfirmation:
+                                confirmationPasswordController.text,
+                          ),
+                        );
+                      }
+                    },
+                    label: 'Simpan',
+                  );
+                },
               ),
             ],
           ),

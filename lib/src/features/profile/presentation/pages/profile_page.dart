@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_card.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_row.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/label_action_card.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,25 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  UserEntity? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _loadAuthData();
+  }
+
+  Future<void> _loadAuthData() async {
+    final authData = await AuthLocalHelper().getAuthData();
+    setState(() {
+      user = authData.toEntity();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             Text(
-              'Jane Evelyn',
+              user == null ? '-' : user!.name,
               style: TextStyle(
                 fontSize: FontSize.standardUp2,
                 fontWeight: FontWeight.w500,
@@ -95,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     RoutePage.isLoggedIn = false;
                     context.goNamed(RouteName.loginPage);
                     break;
-                  case Error(:final failure):
+                  case LogoutError(:final failure):
                     CustomSnackbar.show(
                       context,
                       message: '${failure.message}',

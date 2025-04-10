@@ -2,16 +2,15 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_dermascan/src/core/network/failure.dart';
 import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
 
-abstract class AuthRepository {
-  Future<Either<Failure, UserEntity>> login({
-    required String email,
-    required String password,
-  });
-  Future<Either<Failure, String>> logout();
-  Future<Either<Failure, String>> register({
+abstract class ProfileRepository{
+
+  Future<Either<Failure, UserEntity>> updateProfile({
     required String name,
     required String email,
-    required String password,
+  });
+  Future<Either<Failure, String>> changePassword({
+    required String oldPassword,
+    required String newPassword,
     required String passwordConfirmation,
   });
 }

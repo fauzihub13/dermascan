@@ -34,9 +34,9 @@ class ApiService {
 
           // Check if the current request path is excluded
           if (!excludedPaths.any((path) => options.path.contains(path))) {
-            final authData = await authLocalHelper.getAuthData();
+            final authToken = await authLocalHelper.getAuthToken();
             options.headers[HttpHeaders.authorizationHeader] =
-                'Bearer ${authData.token}';
+                'Bearer $authToken';
           }
 
           return handler.next(options);

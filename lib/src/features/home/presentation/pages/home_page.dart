@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
-import 'package:flutter_dermascan/src/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_list.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_statistic_card.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/main_appbar.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,13 +28,8 @@ class _HomePageState extends State<HomePage> {
     await _loadAuthData();
   }
 
-  // Future<void> _refreshPage() async {
-  //   await _initializeData();
-  // }
-
   Future<void> _loadAuthData() async {
     final authData = await AuthLocalHelper().getAuthData();
-    // print(authData);
     setState(() {
       user = authData.toEntity();
     });

@@ -1,4 +1,4 @@
-import 'package:flutter_dermascan/src/features/auth/data/models/user_model.dart';
+import 'package:flutter_dermascan/src/shared/data/models/user_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthLocalHelper {
@@ -6,6 +6,9 @@ class AuthLocalHelper {
 
   Future<void> saveAuthData(UserModel userModel) async {
     await storage.write(key: 'auth_data', value: userModel.toJson());
+  }
+  Future<void> saveAuthToken(String token) async {
+    await storage.write(key: 'auth_token', value: token);
   }
 
   Future<void> removeAuthData() async {
@@ -19,7 +22,10 @@ class AuthLocalHelper {
 
   Future<UserModel> getAuthData() async {
     String? value = await storage.read(key: 'auth_data');
-
     return UserModel.fromJson(value!);
+  }
+  Future<String> getAuthToken() async {
+    String? value = await storage.read(key: 'auth_token');
+    return value!;
   }
 }

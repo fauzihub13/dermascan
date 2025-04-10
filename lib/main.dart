@@ -7,7 +7,12 @@ import 'package:flutter_dermascan/src/features/auth/data/repositories/auth_repos
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:flutter_dermascan/src/features/auth/domain/usecases/register_use_case.dart';
-import 'package:flutter_dermascan/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:flutter_dermascan/src/features/profile/data/datasources/profile_datasources.dart';
+import 'package:flutter_dermascan/src/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:flutter_dermascan/src/features/profile/domain/usecases/change_password_use_case.dart';
+import 'package:flutter_dermascan/src/features/profile/domain/usecases/update_profile_use_case.dart';
+import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
@@ -36,6 +41,16 @@ void main() async {
           authRemoteDataSource: AuthRemoteDataSource(),
         ),
       ),
+      updateProfileUseCase: UpdateProfileUseCase(
+        profileRepository: ProfileRepositoryImpl(
+          profileDatasources: ProfileDatasources(),
+        ),
+      ),
+      changePasswordUseCase: ChangePasswordUseCase(
+        profileRepository: ProfileRepositoryImpl(
+          profileDatasources: ProfileDatasources(),
+        ),
+      ),
     ),
   );
 }
@@ -45,12 +60,16 @@ class MyApp extends StatelessWidget {
   final LoginUseCase loginUseCase;
   final LogoutUseCase logoutUseCase;
   final RegisterUseCase registerUseCase;
+  final UpdateProfileUseCase updateProfileUseCase;
+  final ChangePasswordUseCase changePasswordUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
     required this.loginUseCase,
     required this.logoutUseCase,
     required this.registerUseCase,
+    required this.updateProfileUseCase,
+    required this.changePasswordUseCase,
   });
 
   @override
@@ -67,6 +86,11 @@ class MyApp extends StatelessWidget {
           create:
               (context) =>
                   AuthBloc(loginUseCase, logoutUseCase, registerUseCase),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  ProfileBloc(updateProfileUseCase, changePasswordUseCase),
         ),
       ],
       child: MaterialApp.router(

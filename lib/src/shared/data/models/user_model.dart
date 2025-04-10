@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_dermascan/src/features/auth/domain/entities/user_entity.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel({
@@ -11,7 +11,6 @@ class UserModel extends UserEntity {
     required super.createdAt,
     required super.updatedAt,
     required super.role,
-    required super.token,
   });
 
   factory UserModel.fromJson(String str) {
@@ -29,7 +28,6 @@ class UserModel extends UserEntity {
         createdAt: DateTime.parse(user["created_at"]),
         updatedAt: DateTime.parse(user["updated_at"]),
         role: user['role'],
-        token: json['token'],
       );
     } else {
       return UserModel(
@@ -40,7 +38,6 @@ class UserModel extends UserEntity {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         role: json['role'],
-        token: json['token'],
       );
     }
   }
@@ -54,7 +51,6 @@ class UserModel extends UserEntity {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       role: entity.role,
-      token: entity.token,
     );
   }
 
@@ -67,7 +63,6 @@ class UserModel extends UserEntity {
       createdAt: createdAt,
       updatedAt: updatedAt,
       role: role,
-      token: token,
     );
   }
 
@@ -81,6 +76,5 @@ class UserModel extends UserEntity {
     "email_verified_at": emailVerifiedAt,
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
-    "token": token,
   };
 }

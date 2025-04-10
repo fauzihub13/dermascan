@@ -8,7 +8,6 @@ class UserEntity extends Equatable {
   final dynamic emailVerifiedAt;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String token;
 
   const UserEntity({
     required this.id,
@@ -18,7 +17,6 @@ class UserEntity extends Equatable {
     required this.emailVerifiedAt,
     required this.createdAt,
     required this.updatedAt,
-    required this.token
   });
 
   @override
@@ -30,6 +28,5 @@ class UserEntity extends Equatable {
     emailVerifiedAt,
     createdAt,
     updatedAt,
-    token
   ];
 }
