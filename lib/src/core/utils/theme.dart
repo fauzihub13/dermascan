@@ -156,6 +156,7 @@ class AppTheme {
         }),
       ),
       dialogTheme: DialogThemeData(backgroundColor: DefaultColors.white),
+      
     );
   }
 }

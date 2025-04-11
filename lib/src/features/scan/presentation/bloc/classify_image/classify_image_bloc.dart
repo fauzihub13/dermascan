@@ -13,16 +13,16 @@ class ClassifyImageBloc extends Bloc<ClassifyImageEvent, ClassifyImageState> {
   ClassifyImageBloc(this.classifyImageUseCase)
     : super(const ClassifyImageState.initial()) {
     on<ClassifyImage>((event, emit) async {
-      emit(Loading());
+      emit(ClasifyImageLoading());
 
       final result = await classifyImageUseCase.call(event.imagePath);
 
       result.fold(
         (failure) {
-          return emit(Error(failure));
+          return emit(ClasifyImageError(failure));
         },
         (classificationResultEntity) {
-          return emit(Loaded(classificationResultEntity));
+          return emit(ClasifyImageLoaded(classificationResultEntity));
         },
       );
     });

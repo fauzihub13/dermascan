@@ -205,8 +205,8 @@ String toString() {
 /// @nodoc
 
 
-class Loading implements ClassifyImageState {
-  const Loading();
+class ClasifyImageLoading implements ClassifyImageState {
+  const ClasifyImageLoading();
   
 
 
@@ -216,7 +216,7 @@ class Loading implements ClassifyImageState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClasifyImageLoading);
 }
 
 
@@ -225,7 +225,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ClassifyImageState.loading()';
+  return 'ClassifyImageState.clasifyImageloading()';
 }
 
 
@@ -237,8 +237,8 @@ String toString() {
 /// @nodoc
 
 
-class Loaded implements ClassifyImageState {
-  const Loaded(this.classificationResultEntity);
+class ClasifyImageLoaded implements ClassifyImageState {
+  const ClasifyImageLoaded(this.classificationResultEntity);
   
 
  final  ClassificationResultEntity classificationResultEntity;
@@ -247,13 +247,13 @@ class Loaded implements ClassifyImageState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$LoadedCopyWith<Loaded> get copyWith => _$LoadedCopyWithImpl<Loaded>(this, _$identity);
+$ClasifyImageLoadedCopyWith<ClasifyImageLoaded> get copyWith => _$ClasifyImageLoadedCopyWithImpl<ClasifyImageLoaded>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loaded&&(identical(other.classificationResultEntity, classificationResultEntity) || other.classificationResultEntity == classificationResultEntity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClasifyImageLoaded&&(identical(other.classificationResultEntity, classificationResultEntity) || other.classificationResultEntity == classificationResultEntity));
 }
 
 
@@ -262,15 +262,15 @@ int get hashCode => Object.hash(runtimeType,classificationResultEntity);
 
 @override
 String toString() {
-  return 'ClassifyImageState.loaded(classificationResultEntity: $classificationResultEntity)';
+  return 'ClassifyImageState.clasifyImageloaded(classificationResultEntity: $classificationResultEntity)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $LoadedCopyWith<$Res> implements $ClassifyImageStateCopyWith<$Res> {
-  factory $LoadedCopyWith(Loaded value, $Res Function(Loaded) _then) = _$LoadedCopyWithImpl;
+abstract mixin class $ClasifyImageLoadedCopyWith<$Res> implements $ClassifyImageStateCopyWith<$Res> {
+  factory $ClasifyImageLoadedCopyWith(ClasifyImageLoaded value, $Res Function(ClasifyImageLoaded) _then) = _$ClasifyImageLoadedCopyWithImpl;
 @useResult
 $Res call({
  ClassificationResultEntity classificationResultEntity
@@ -281,17 +281,17 @@ $Res call({
 
 }
 /// @nodoc
-class _$LoadedCopyWithImpl<$Res>
-    implements $LoadedCopyWith<$Res> {
-  _$LoadedCopyWithImpl(this._self, this._then);
+class _$ClasifyImageLoadedCopyWithImpl<$Res>
+    implements $ClasifyImageLoadedCopyWith<$Res> {
+  _$ClasifyImageLoadedCopyWithImpl(this._self, this._then);
 
-  final Loaded _self;
-  final $Res Function(Loaded) _then;
+  final ClasifyImageLoaded _self;
+  final $Res Function(ClasifyImageLoaded) _then;
 
 /// Create a copy of ClassifyImageState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? classificationResultEntity = null,}) {
-  return _then(Loaded(
+  return _then(ClasifyImageLoaded(
 null == classificationResultEntity ? _self.classificationResultEntity : classificationResultEntity // ignore: cast_nullable_to_non_nullable
 as ClassificationResultEntity,
   ));
@@ -303,8 +303,8 @@ as ClassificationResultEntity,
 /// @nodoc
 
 
-class Error implements ClassifyImageState {
-  const Error(this.failure);
+class ClasifyImageError implements ClassifyImageState {
+  const ClasifyImageError(this.failure);
   
 
  final  Failure failure;
@@ -313,13 +313,13 @@ class Error implements ClassifyImageState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$ErrorCopyWith<Error> get copyWith => _$ErrorCopyWithImpl<Error>(this, _$identity);
+$ClasifyImageErrorCopyWith<ClasifyImageError> get copyWith => _$ClasifyImageErrorCopyWithImpl<ClasifyImageError>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Error&&(identical(other.failure, failure) || other.failure == failure));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClasifyImageError&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
@@ -328,15 +328,15 @@ int get hashCode => Object.hash(runtimeType,failure);
 
 @override
 String toString() {
-  return 'ClassifyImageState.error(failure: $failure)';
+  return 'ClassifyImageState.clasifyImageerror(failure: $failure)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $ErrorCopyWith<$Res> implements $ClassifyImageStateCopyWith<$Res> {
-  factory $ErrorCopyWith(Error value, $Res Function(Error) _then) = _$ErrorCopyWithImpl;
+abstract mixin class $ClasifyImageErrorCopyWith<$Res> implements $ClassifyImageStateCopyWith<$Res> {
+  factory $ClasifyImageErrorCopyWith(ClasifyImageError value, $Res Function(ClasifyImageError) _then) = _$ClasifyImageErrorCopyWithImpl;
 @useResult
 $Res call({
  Failure failure
@@ -347,17 +347,17 @@ $Res call({
 
 }
 /// @nodoc
-class _$ErrorCopyWithImpl<$Res>
-    implements $ErrorCopyWith<$Res> {
-  _$ErrorCopyWithImpl(this._self, this._then);
+class _$ClasifyImageErrorCopyWithImpl<$Res>
+    implements $ClasifyImageErrorCopyWith<$Res> {
+  _$ClasifyImageErrorCopyWithImpl(this._self, this._then);
 
-  final Error _self;
-  final $Res Function(Error) _then;
+  final ClasifyImageError _self;
+  final $Res Function(ClasifyImageError) _then;
 
 /// Create a copy of ClassifyImageState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? failure = null,}) {
-  return _then(Error(
+  return _then(ClasifyImageError(
 null == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
 as Failure,
   ));

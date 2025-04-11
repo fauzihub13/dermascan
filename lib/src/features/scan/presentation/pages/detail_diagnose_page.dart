@@ -55,206 +55,235 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
   @override
   Widget build(BuildContext context) {
     CroppedFile croppedFile = CroppedFile(widget.imagePath);
-    return Scaffold(
-      appBar: CustomAppbar(title: 'Detail Diagnosa', canBack: true),
-      body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: PaddingSize.horizontal,
-            vertical: PaddingSize.vertical,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image(
-                    image: FileImage(File(croppedFile.path)),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width,
-                    fit: BoxFit.cover,
-                  ),
+    return BlocConsumer<ClassifyImageBloc, ClassifyImageState>(
+      listener: (context, state) {
+        switch (state) {
+          case ClasifyImageLoaded(:final classificationResultEntity):
+            String diagnoseName =
+                classificationResultEntity.results.isNotEmpty
+                    ? classificationResultEntity.results.first['label']
+                    : '-';
+            context.read<ClassifyBloc>().add(
+              ClassifyEvent.getDetailDiagnose(diganose: diagnoseName),
+            );
+            break;
+        }
+      },
+      builder: (context, state) {
+        switch (state) {
+          case ClasifyImageLoading():
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: DefaultColors.primaryColor,
                 ),
-                const SizedBox(height: 12),
-                BlocBuilder<ClassifyImageBloc, ClassifyImageState>(
-                  builder: (context, state) {
-                    String labelText = '-';
-                    switch (state) {
-                      case Loaded(:final classificationResultEntity):
-                        labelText =
-                            classificationResultEntity.results.isNotEmpty
-                                ? classificationResultEntity
-                                    .results
-                                    .first['label']
-                                : '-';
-                        classifiedResults = classificationResultEntity.results;
-                        break;
-                      default:
-                        labelText = '-';
-                    }
-                    return Text(
-                      labelText,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: FontSize.diseaseName,
-                        fontWeight: FontWeight.w600,
-                        color: DefaultColors.darkBlue,
-                      ),
-                    );
-                  },
-                ),
+              ),
+            );
 
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Text(
-                      'Akurasi: ',
-                      style: TextStyle(
-                        fontSize: FontSize.standardUp,
-                        fontWeight: FontWeight.w400,
-                        color: DefaultColors.grey,
-                      ),
-                    ),
-                    BlocBuilder<ClassifyImageBloc, ClassifyImageState>(
-                      builder: (context, state) {
-                        double accuracy = 0.0;
-                        switch (state) {
-                          case Loaded(:final classificationResultEntity):
-                            accuracy =
-                                classificationResultEntity.results.isNotEmpty
-                                    ? classificationResultEntity
-                                        .results
-                                        .first['confidence']
-                                    : 0.0;
-                            break;
-                          default:
-                            accuracy = 0.0;
-                        }
-                        return Text(
-                          '${accuracy.toStringAsFixed(2)}%',
+          case ClasifyImageError(:final failure):
+            return Scaffold(body: Center(child: Text('${failure.message}')));
+
+          case ClasifyImageLoaded(:final classificationResultEntity):
+            String labelText = '-';
+            double accuracy = 0.0;
+
+            labelText =
+                classificationResultEntity.results.isNotEmpty
+                    ? classificationResultEntity.results.first['label']
+                    : '-';
+            classifiedResults = classificationResultEntity.results;
+            accuracy =
+                classificationResultEntity.results.isNotEmpty
+                    ? classificationResultEntity.results.first['confidence']
+                    : 0.0;
+
+            return Scaffold(
+              appBar: CustomAppbar(title: 'Detail Diagnosa', canBack: true),
+              body: SafeArea(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: PaddingSize.horizontal,
+                    vertical: PaddingSize.vertical,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image(
+                            image: FileImage(File(croppedFile.path)),
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          labelText,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: FontSize.standardUp,
+                            fontSize: FontSize.diseaseName,
                             fontWeight: FontWeight.w600,
                             color: DefaultColors.darkBlue,
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Divider(color: DefaultColors.lightGrey4),
-                TabBar(
-                  controller: tabController,
-                  indicatorColor: DefaultColors.primaryBlue,
-                  labelColor: DefaultColors.primaryBlue,
-                  unselectedLabelColor: DefaultColors.navbarDisable,
-                  dividerColor: DefaultColors.lightBlue,
-                  padding: EdgeInsets.all(0),
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.center,
-                  tabs: [
-                    Tab(text: 'Deskripsi'),
-                    Tab(text: 'Penyebab'),
-                    Tab(text: 'Gejala'),
-                    Tab(text: 'Solusi'),
-                  ],
-                ),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SizedBox(
-                      height: tabHeights[tabController.index],
-                      child: TabBarView(
-                        controller: tabController,
-                        children: [
-                          _buildTabContent(
-                            0,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                          _buildTabContent(
-                            1,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                          _buildTabContent(
-                            2,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                          _buildTabContent(
-                            3,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: PaddingSize.horizontal,
-          ),
-          child: BlocConsumer<ClassifyBloc, ClassifyState>(
-            listener: (context, state) {
-              switch (state) {
-                case successSaveResult():
-                  CustomSnackbar.show(
-                    context,
-                    message: 'Berhasil meyimpan hasil diganosa',
-                    status: 'success',
-                  );
-                  context.pushNamed(RouteName.diagnoseHistoryPage);
-                  break;
-                case errorSaveResult(:final failure):
-                  CustomSnackbar.show(
-                    context,
-                    message: '${failure.message}',
-                    status: 'fail',
-                  );
-                  break;
-              }
-            },
-            builder: (context, state) {
-              return CustomButton.filled(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext dialogContext) {
-                      return SaveDiagnoseDialog(
-                        labelController: labelController,
-                        onPressed: () {
-                          print(widget.imagePath);
-                          context.read<ClassifyBloc>().add(
-                            ClassifyEvent.saveResult(
-                              imagePath: widget.imagePath,
-                              label: labelController.text,
-                              priority: priority,
-                              reuslts: classifiedResults,
+                        ),
+
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Text(
+                              'Akurasi: ',
+                              style: TextStyle(
+                                fontSize: FontSize.standardUp,
+                                fontWeight: FontWeight.w400,
+                                color: DefaultColors.grey,
+                              ),
                             ),
+                            Text(
+                              '${accuracy.toStringAsFixed(2)}%',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: FontSize.standardUp,
+                                fontWeight: FontWeight.w600,
+                                color: DefaultColors.darkBlue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Divider(color: DefaultColors.lightGrey4),
+                        TabBar(
+                          controller: tabController,
+                          indicatorColor: DefaultColors.primaryBlue,
+                          labelColor: DefaultColors.primaryBlue,
+                          unselectedLabelColor: DefaultColors.navbarDisable,
+                          dividerColor: DefaultColors.lightBlue,
+                          padding: EdgeInsets.all(0),
+                          isScrollable: true,
+                          tabAlignment: TabAlignment.center,
+                          tabs: [
+                            Tab(text: 'Deskripsi'),
+                            Tab(text: 'Penyebab'),
+                            Tab(text: 'Gejala'),
+                            Tab(text: 'Solusi'),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        BlocConsumer<ClassifyBloc, ClassifyState>(
+                          listener: (context, state) {
+                            switch (state) {
+                              case ErrorGetDetailDiagnose(:final failure):
+                                CustomSnackbar.show(
+                                  context,
+                                  message: '${failure.message}',
+                                  status: 'fail',
+                                );
+                                break;
+                            }
+                          },
+                          builder: (context, state) {
+                            String description = '-';
+                            String causes = '-';
+                            String symptoms = '-';
+                            String solutions = '-';
+                            switch (state) {
+                              case SuccessGetDetailDiagnose(
+                                :final classificationDetailEntity,
+                              ):
+                                description =
+                                    classificationDetailEntity.description;
+                                causes = classificationDetailEntity.causes;
+                                symptoms = classificationDetailEntity.symptoms;
+                                solutions =
+                                    classificationDetailEntity.solutions;
+                            }
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SizedBox(
+                                  height: tabHeights[tabController.index],
+                                  child: TabBarView(
+                                    controller: tabController,
+                                    children: [
+                                      _buildTabContent(0, description),
+                                      _buildTabContent(1, causes),
+                                      _buildTabContent(2, symptoms),
+                                      _buildTabContent(3, solutions),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              bottomNavigationBar: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: PaddingSize.horizontal,
+                  ),
+                  child: BlocConsumer<ClassifyBloc, ClassifyState>(
+                    listener: (context, state) {
+                      switch (state) {
+                        case SuccessSaveResult():
+                          CustomSnackbar.show(
+                            context,
+                            message: 'Berhasil meyimpan hasil diganosa',
+                            status: 'success',
+                          );
+                          context.pushNamed(RouteName.diagnoseHistoryPage);
+                          break;
+                        case ErrorSaveResult(:final failure):
+                          CustomSnackbar.show(
+                            context,
+                            message: '${failure.message}',
+                            status: 'fail',
+                          );
+                          break;
+                      }
+                    },
+                    builder: (context, state) {
+                      return CustomButton.filled(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext dialogContext) {
+                              return SaveDiagnoseDialog(
+                                labelController: labelController,
+                                onPressed: () {
+                                  context.read<ClassifyBloc>().add(
+                                    ClassifyEvent.saveResult(
+                                      imagePath: widget.imagePath,
+                                      label: labelController.text,
+                                      priority: priority,
+                                      reuslts: classifiedResults,
+                                    ),
+                                  );
+                                },
+                                onChanged: (value) {
+                                  setState(() {
+                                    priority = value;
+                                  });
+                                },
+                              );
+                            },
                           );
                         },
-                        onChanged: (value) {
-                          setState(() {
-                            priority = value;
-                          });
-                        },
+                        label: 'Simpan Hasil',
                       );
                     },
-                  );
-                },
-                label: 'Simpan Hasil',
-              );
-            },
-          ),
-        ),
-      ),
+                  ),
+                ),
+              ),
+            );
+        }
+        return Scaffold(body: Center(child: Text('Mengklasifikasi gambar...')));
+      },
     );
   }
 
@@ -270,11 +299,13 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
             ),
           ),
           textDirection: TextDirection.ltr,
+          textWidthBasis: TextWidthBasis.parent,
+          maxLines: null,
         )..layout(maxWidth: constraints.maxWidth);
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
-            tabHeights[index] = textPainter.height;
+            tabHeights[index] = textPainter.height * 1.3;
           });
         });
 

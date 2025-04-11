@@ -48,6 +48,7 @@ class ClassificationRepositoryImpl implements ClassificationRepository {
 
   @override
   Future<Either<Failure, void>> loadLabels() => dataSource.loadLabels();
+
   @override
   Future<Either<Failure, String>> saveResult({
     required String imagePath,
@@ -62,4 +63,5 @@ class ClassificationRepositoryImpl implements ClassificationRepository {
       results: results,
     );
   }
+
 }
