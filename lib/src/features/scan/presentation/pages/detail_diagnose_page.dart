@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/repositories/classification_repository.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
-import 'package:flutter_dermascan/src/features/scan/presentation/bloc/bloc/classify_image_bloc.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify_image/classify_image_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
@@ -28,13 +30,11 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
   final TextEditingController labelController = TextEditingController();
   String priority = '';
 
-  // MODEL
-
   List<Map<String, dynamic>> classifiedResults = [];
 
   late ClassificationRepository classificationRepository;
   late ClassifyImageUseCase classifyImageUseCase;
-  bool isModelLoaded = false; // Untuk tracking apakah model berhasil dimuat
+  bool isModelLoaded = false;
 
   @override
   void initState() {
@@ -89,6 +89,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                                     .results
                                     .first['label']
                                 : '-';
+                        classifiedResults = classificationResultEntity.results;
                         break;
                       default:
                         labelText = '-';
@@ -145,12 +146,9 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                   ],
                 ),
                 const SizedBox(height: 12),
-
                 const Divider(color: DefaultColors.lightGrey4),
-
                 TabBar(
                   controller: tabController,
-
                   indicatorColor: DefaultColors.primaryBlue,
                   labelColor: DefaultColors.primaryBlue,
                   unselectedLabelColor: DefaultColors.navbarDisable,
@@ -203,31 +201,57 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
           padding: const EdgeInsets.symmetric(
             horizontal: PaddingSize.horizontal,
           ),
-          child: CustomButton.filled(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext dialogContext) {
-                  return SaveDiagnoseDialog(
-                    labelController: labelController,
-                    onPressed: () {
-                      CustomSnackbar.show(
-                        context,
-                        message: 'Berhasil meyimpan',
-                        status: 'success',
+          child: BlocConsumer<ClassifyBloc, ClassifyState>(
+            listener: (context, state) {
+              switch (state) {
+                case successSaveResult():
+                  CustomSnackbar.show(
+                    context,
+                    message: 'Berhasil meyimpan hasil diganosa',
+                    status: 'success',
+                  );
+                  context.pushNamed(RouteName.diagnoseHistoryPage);
+                  break;
+                case errorSaveResult(:final failure):
+                  CustomSnackbar.show(
+                    context,
+                    message: '${failure.message}',
+                    status: 'fail',
+                  );
+                  break;
+              }
+            },
+            builder: (context, state) {
+              return CustomButton.filled(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return SaveDiagnoseDialog(
+                        labelController: labelController,
+                        onPressed: () {
+                          print(widget.imagePath);
+                          context.read<ClassifyBloc>().add(
+                            ClassifyEvent.saveResult(
+                              imagePath: widget.imagePath,
+                              label: labelController.text,
+                              priority: priority,
+                              reuslts: classifiedResults,
+                            ),
+                          );
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            priority = value;
+                          });
+                        },
                       );
-                      context.pop();
-                    },
-                    onChanged: (value) {
-                      setState(() {
-                        priority = value;
-                      });
                     },
                   );
                 },
+                label: 'Simpan Hasil',
               );
             },
-            label: 'Simpan Hasil',
           ),
         ),
       ),

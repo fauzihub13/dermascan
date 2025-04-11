@@ -6,5 +6,13 @@ abstract class ClassificationRepository {
   Future<Either<Failure, void>> init();
   Future<Either<Failure, void>> loadModel();
   Future<Either<Failure, void>> loadLabels();
-  Future<Either<Failure, ClassificationResultEntity>> classifyImage({required String imagePath});
+  Future<Either<Failure, ClassificationResultEntity>> classifyImage({
+    required String imagePath,
+  });
+  Future<Either<Failure, String>> saveResult({
+    required String imagePath,
+    required String label,
+    required String priority,
+    required List<Map<String, dynamic>> results,
+  });
 }

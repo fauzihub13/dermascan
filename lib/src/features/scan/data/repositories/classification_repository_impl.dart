@@ -1,14 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dermascan/src/core/network/failure.dart';
+import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/entities/classification_result_entity.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/repositories/classification_repository.dart';
 
 class ClassificationRepositoryImpl implements ClassificationRepository {
   final ClassificationImageDataSource dataSource;
+  final ClassificationDataSource classificationDataSource;
   bool _isInitialized = false;
 
-  ClassificationRepositoryImpl(this.dataSource);
+  ClassificationRepositoryImpl(this.dataSource, this.classificationDataSource);
 
   @override
   Future<Either<Failure, void>> init() async {
@@ -46,4 +48,18 @@ class ClassificationRepositoryImpl implements ClassificationRepository {
 
   @override
   Future<Either<Failure, void>> loadLabels() => dataSource.loadLabels();
+  @override
+  Future<Either<Failure, String>> saveResult({
+    required String imagePath,
+    required String label,
+    required String priority,
+    required List<Map<String, dynamic>> results,
+  }) async {
+    return await classificationDataSource.saveResult(
+      imagePath: imagePath,
+      label: label,
+      priority: priority,
+      results: results,
+    );
+  }
 }

@@ -14,10 +14,13 @@ import 'package:flutter_dermascan/src/features/profile/data/repositories/profile
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/change_password_use_case.dart';
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/update_profile_use_case.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
+import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_image_data_source.dart';
 import 'package:flutter_dermascan/src/features/scan/data/repositories/classification_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
-import 'package:flutter_dermascan/src/features/scan/presentation/bloc/bloc/classify_image_bloc.dart';
+import 'package:flutter_dermascan/src/features/scan/domain/usecases/save_classify_result_use_case.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify_image/classify_image_bloc.dart';
 import 'package:flutter_dermascan/src/shared/data/repositories/local_auth_repository_impl.dart';
 import 'package:flutter_dermascan/src/shared/domain/usecases/get_local_auth_use_case.dart';
 import 'package:flutter_dermascan/src/shared/domain/usecases/save_local_auth_use_case.dart';
@@ -25,7 +28,10 @@ import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_b
 
 void main() async {
   final ClassificationRepositoryImpl classificationRepository =
-      ClassificationRepositoryImpl(ClassificationImageDataSource());
+      ClassificationRepositoryImpl(
+        ClassificationImageDataSource(),
+        ClassificationDataSource(),
+      );
   WidgetsFlutterBinding.ensureInitialized();
   await RoutePage.init();
   runApp(
@@ -66,6 +72,9 @@ void main() async {
           authLocalHelper: AuthLocalHelper(),
         ),
       ),
+      saveClassifyResultUseCase: SaveClassifyResultUseCase(
+        classificationRepository: classificationRepository,
+      ),
     ),
   );
 }
@@ -79,6 +88,7 @@ class MyApp extends StatelessWidget {
   final ChangePasswordUseCase changePasswordUseCase;
   final GetLocalAuthUseCase getLocalAuthUseCase;
   final SaveLocalAuthUseCase saveLocalAuthUseCase;
+  final SaveClassifyResultUseCase saveClassifyResultUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
@@ -89,6 +99,7 @@ class MyApp extends StatelessWidget {
     required this.changePasswordUseCase,
     required this.getLocalAuthUseCase,
     required this.saveLocalAuthUseCase,
+    required this.saveClassifyResultUseCase,
   });
 
   @override
@@ -115,6 +126,9 @@ class MyApp extends StatelessWidget {
           create:
               (context) =>
                   LocalAuthBloc(getLocalAuthUseCase, saveLocalAuthUseCase),
+        ),
+        BlocProvider(
+          create: (context) => ClassifyBloc(saveClassifyResultUseCase),
         ),
       ],
       child: MaterialApp.router(
