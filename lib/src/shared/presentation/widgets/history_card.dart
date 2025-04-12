@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 class HistoryCard extends StatelessWidget {
   final VoidCallback onPressed;
   final DiagnoseHistoryEntity diagnoseHistoryEntity;
+
   HistoryCard({
     super.key,
     required this.onPressed,

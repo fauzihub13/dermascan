@@ -69,6 +69,7 @@ class _HistoryListState extends State<HistoryList> {
                             onPressed: () {
                               context.pushNamed(
                                 RouteName.diagnoseDetailHistoryPage,
+                                extra: diagnoseHistoryEntity,
                               );
                             },
                           ),

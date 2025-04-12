@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/core/utils/variables.dart';
+import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/diagnose_history_entity.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 
 class DetailHistoryPage extends StatefulWidget {
-  const DetailHistoryPage({super.key});
+  final DiagnoseHistoryEntity diagnoseHistoryEntity;
+  const DetailHistoryPage({super.key, required this.diagnoseHistoryEntity});
 
   @override
   State<DetailHistoryPage> createState() => _DetailHistoryPageState();
@@ -13,8 +19,14 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   List<double> tabHeights = [0, 0, 0, 0];
+  
   @override
   void initState() {
+    context.read<ClassifyBloc>().add(
+      ClassifyEvent.getDetailDiagnose(
+        diganose: widget.diagnoseHistoryEntity.classifyImageResults.first.label,
+      ),
+    );
     tabController = TabController(length: 4, vsync: this);
     tabController.addListener(() {
       setState(() {});
@@ -35,12 +47,12 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              // spacing: 12,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    'assets/images/hand_disease.jpg',
+                  child: Image.network(
+                    Variables.baseUrl + widget.diagnoseHistoryEntity.imagePath,
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.width,
                     fit: BoxFit.cover,
@@ -48,7 +60,8 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Actinic Keratosis, Basal Cell Carcinoma, and other Malignant Lesions',
+                  widget.diagnoseHistoryEntity.classifyImageResults.first.label,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: FontSize.diseaseName,
                     fontWeight: FontWeight.w600,
@@ -67,7 +80,7 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                       ),
                     ),
                     Text(
-                      '78%',
+                      '${widget.diagnoseHistoryEntity.classifyImageResults.first.confidence.toStringAsFixed(2)}%',
                       maxLines: 1,
                       style: TextStyle(
                         fontSize: FontSize.standardUp,
@@ -78,12 +91,10 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                   ],
                 ),
                 const SizedBox(height: 12),
-
                 const Divider(color: DefaultColors.lightGrey4),
-
                 TabBar(
                   controller: tabController,
-                  
+
                   indicatorColor: DefaultColors.primaryBlue,
                   labelColor: DefaultColors.primaryBlue,
                   unselectedLabelColor: DefaultColors.navbarDisable,
@@ -98,31 +109,47 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                     Tab(text: 'Solusi'),
                   ],
                 ),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SizedBox(
-                      height: tabHeights[tabController.index],
-                      child: TabBarView(
-                        controller: tabController,
-                        children: [
-                          _buildTabContent(
-                            0,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
+                BlocConsumer<ClassifyBloc, ClassifyState>(
+                  listener: (context, state) {
+                    switch (state) {
+                      case ErrorGetDetailDiagnose(:final failure):
+                        CustomSnackbar.show(
+                          context,
+                          message: '${failure.message}',
+                          status: 'fail',
+                        );
+                        break;
+                    }
+                  },
+                  builder: (context, state) {
+                    String description = '-';
+                    String causes = '-';
+                    String symptoms = '-';
+                    String solutions = '-';
+                    switch (state) {
+                      case SuccessGetDetailDiagnose(
+                        :final classificationDetailEntity,
+                      ):
+                        description = classificationDetailEntity.description;
+                        causes = classificationDetailEntity.causes;
+                        symptoms = classificationDetailEntity.symptoms;
+                        solutions = classificationDetailEntity.solutions;
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SizedBox(
+                          height: tabHeights[tabController.index],
+                          child: TabBarView(
+                            controller: tabController,
+                            children: [
+                              _buildTabContent(0, description),
+                              _buildTabContent(1, causes),
+                              _buildTabContent(2, symptoms),
+                              _buildTabContent(3, solutions),
+                            ],
                           ),
-                          _buildTabContent(
-                            1,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                          _buildTabContent(
-                            2,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                          _buildTabContent(
-                            3,
-                            'Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit, modern residence in a very strategic location from the city center. Blue Nature is a 5 star complemented with 80 well bedroom and suit.',
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -150,7 +177,7 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
-            tabHeights[index] = textPainter.height;
+            tabHeights[index] = textPainter.height * 1.3;
           });
         });
 

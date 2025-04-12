@@ -9,6 +9,7 @@ import 'package:flutter_dermascan/src/features/profile/presentation/pages/detail
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/pages/history_page.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/pages/detail_diagnose_page.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/diagnose_history_entity.dart';
 import 'package:go_router/go_router.dart';
 
 class RoutePage {
@@ -25,7 +26,7 @@ class RoutePage {
             state.matchedLocation == '/${RouteName.loginPage}' ||
             state.matchedLocation == '/${RouteName.registerPage}';
 
-       if (!isLoggedIn &&
+        if (!isLoggedIn &&
             !loggingIn &&
             state.matchedLocation != '/${RouteName.welcomePage}') {
           return '/${RouteName.welcomePage}';
@@ -61,7 +62,14 @@ class RoutePage {
         GoRoute(
           name: RouteName.diagnoseDetailHistoryPage,
           path: '/${RouteName.diagnoseDetailHistoryPage}',
-          builder: (context, state) => DetailHistoryPage(),
+
+          builder: (context, state) {
+            DiagnoseHistoryEntity diagnoseHistoryEntity =
+                state.extra as DiagnoseHistoryEntity;
+            return DetailHistoryPage(
+              diagnoseHistoryEntity: diagnoseHistoryEntity,
+            );
+          },
         ),
         GoRoute(
           name: RouteName.loginPage,
