@@ -9,6 +9,7 @@ import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_ima
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify_image/classify_image_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/diagnose_history/diagnose_history_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
@@ -35,6 +36,11 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
   late ClassificationRepository classificationRepository;
   late ClassifyImageUseCase classifyImageUseCase;
   bool isModelLoaded = false;
+
+  String description = '-';
+  String causes = '-';
+  String symptoms = '-';
+  String solutions = '-';
 
   @override
   void initState() {
@@ -71,15 +77,6 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
       },
       builder: (context, state) {
         switch (state) {
-          // case ClasifyImageLoading():
-          //   return Scaffold(
-          //     body: Center(
-          //       child: CircularProgressIndicator(
-          //         color: DefaultColors.primaryColor,
-          //       ),
-          //     ),
-          //   );
-
           case ClasifyImageError(:final failure):
             return Scaffold(body: Center(child: Text('${failure.message}')));
 
@@ -184,10 +181,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                             }
                           },
                           builder: (context, state) {
-                            String description = '-';
-                            String causes = '-';
-                            String symptoms = '-';
-                            String solutions = '-';
+                            
                             switch (state) {
                               case SuccessGetDetailDiagnose(
                                 :final classificationDetailEntity,
@@ -230,12 +224,17 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                   child: BlocConsumer<ClassifyBloc, ClassifyState>(
                     listener: (context, state) {
                       switch (state) {
+                        case LoadingSaveResult():
+                          Navigator.of(context).pop();
                         case SuccessSaveResult():
                           Navigator.of(context).pop();
                           CustomSnackbar.show(
                             context,
                             message: 'Berhasil meyimpan hasil diganosa',
                             status: 'success',
+                          );
+                          context.read<DiagnoseHistoryBloc>().add(
+                            DiagnoseHistoryEvent.getDiagnoseHistory(),
                           );
                           context.goNamed(RouteName.landingPage);
                           break;
