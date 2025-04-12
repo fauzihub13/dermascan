@@ -5,6 +5,7 @@ enum FormStyle { filled, outlined }
 
 class FormInput extends StatelessWidget {
   final TextEditingController controller;
+  final Function(String value)? onChanged;
   final String? labelText;
   final FormStyle style;
   final String? hintText;
@@ -34,7 +35,7 @@ class FormInput extends StatelessWidget {
     this.textInputType = TextInputType.text,
     this.validator,
     this.onTap,
-    this.obscureText = false,
+    this.obscureText = false, this.onChanged,
   });
 
   @override
@@ -42,6 +43,7 @@ class FormInput extends StatelessWidget {
     return TextFormField(
       keyboardType: textInputType,
       controller: controller,
+      onChanged: onChanged,
       enabled: enabled,
       readOnly: readOnly,
       maxLines: maxLines,

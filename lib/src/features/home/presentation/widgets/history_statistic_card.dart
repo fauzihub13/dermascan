@@ -49,7 +49,9 @@ class HistoryStatisticCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  lastCheck!.isNotEmpty ? 'Terakhir ${lastCheck!}' : '-',
+                  lastCheck!.isNotEmpty
+                      ? 'Terakhir periksa ${lastCheck!}'
+                      : 'Belum pernah periksa',
                   style: TextStyle(
                     fontSize: FontSize.standard,
                     fontWeight: FontWeight.w400,

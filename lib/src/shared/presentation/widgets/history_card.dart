@@ -1,13 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
+import 'package:flutter_dermascan/src/core/utils/variables.dart';
+import 'package:flutter_dermascan/src/shared/domain/entities/diagnose_history_entity.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_badge.dart';
+import 'package:intl/intl.dart';
 
 class HistoryCard extends StatelessWidget {
   final VoidCallback onPressed;
-  const HistoryCard({super.key, required this.onPressed});
+  final DiagnoseHistoryEntity diagnoseHistoryEntity;
+  HistoryCard({
+    super.key,
+    required this.onPressed,
+    required this.diagnoseHistoryEntity,
+  });
+
+  final List<Map<String, dynamic>> listPriority = [
+    {
+      'priority': 'tidak_bahaya',
+      'label': 'Tidak Bahaya',
+      'style': BadgeStyle.none,
+    },
+    {'priority': 'rendah', 'label': 'Rendah', 'style': BadgeStyle.low},
+    {'priority': 'sedang', 'label': 'Sedang', 'style': BadgeStyle.medium},
+    {'priority': 'bahaya', 'label': 'Bahaya', 'style': BadgeStyle.high},
+  ];
+
+  Map<String, dynamic> _getStatusData(String status) {
+    final statusData = listPriority.firstWhere(
+      (item) => item['priority'] == status,
+      orElse: () => {'label': status, 'style': BadgeStyle.none},
+    );
+    return statusData;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final statusData = _getStatusData(diagnoseHistoryEntity.priority);
+
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -24,8 +53,8 @@ class HistoryCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/hand_disease.jpg',
+              child: Image.network(
+                Variables.baseUrl + diagnoseHistoryEntity.imagePath,
                 width: 84,
                 height: 84,
                 fit: BoxFit.cover,
@@ -37,7 +66,7 @@ class HistoryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Superficial basal cell carcinoma carcinoma carcinoma carcinoma',
+                    diagnoseHistoryEntity.label,
                     maxLines: 1,
                     style: TextStyle(
                       fontSize: FontSize.standardUp,
@@ -57,7 +86,9 @@ class HistoryCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '24/04/2025',
+                        DateFormat(
+                          'dd/M/yy',
+                        ).format(diagnoseHistoryEntity.createdAt),
                         maxLines: 1,
                         style: TextStyle(
                           fontSize: FontSize.standard,
@@ -67,7 +98,10 @@ class HistoryCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  CustomBadge(label: 'Tidak Bahaya', style: BadgeStyle.none),
+                  CustomBadge(
+                    label: statusData['label'],
+                    style: statusData['style'],
+                  ),
                 ],
               ),
             ),

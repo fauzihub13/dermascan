@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dermascan/src/core/helper/time_ago_helper.dart';
 import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_list.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/history_statistic_card.dart';
 import 'package:flutter_dermascan/src/features/home/presentation/widgets/main_appbar.dart';
-import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/diagnose_history/diagnose_history_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,15 +18,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
-    super.initState();
     _initializeData();
+    super.initState();
   }
 
   Future<void> _initializeData() async {
     context.read<LocalAuthBloc>().add(LocalAuthEvent.getLocalAuth());
+    context.read<DiagnoseHistoryBloc>().add(
+      DiagnoseHistoryEvent.getDiagnoseHistory(),
+    );
   }
 
   @override
@@ -55,12 +59,29 @@ class _HomePageState extends State<HomePage> {
             spacing: 20,
             children: [
               Image.asset('assets/images/banner.png'),
-              HistoryStatisticCard(
-                onPressed: () {
-                  context.pushNamed(RouteName.diagnoseHistoryPage);
+              BlocBuilder<DiagnoseHistoryBloc, DiagnoseHistoryState>(
+                builder: (context, state) {
+                  int count = 0;
+                  String lastCheck = '';
+                  switch (state) {
+                    case SuccessGetDiagnoseHistory(
+                      :final listDiagnoseHistoryEntity,
+                    ):
+                      count = listDiagnoseHistoryEntity.length;
+                      if (listDiagnoseHistoryEntity.isNotEmpty) {
+                        lastCheck = TimeAgoHelper.timeAgo(
+                          listDiagnoseHistoryEntity.last.createdAt,
+                        );
+                      }
+                  }
+                  return HistoryStatisticCard(
+                    onPressed: () {
+                      context.pushNamed(RouteName.diagnoseHistoryPage);
+                    },
+                    count: count,
+                    lastCheck: lastCheck,
+                  );
                 },
-                count: 2,
-                lastCheck: '20 hari yang lalu',
               ),
               HistoryList(),
             ],

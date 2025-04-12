@@ -23,10 +23,14 @@ import 'package:flutter_dermascan/src/features/scan/domain/usecases/get_detail_d
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/save_classify_result_use_case.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify_image/classify_image_bloc.dart';
+import 'package:flutter_dermascan/src/shared/data/datasources/diagnose_history_data_source.dart';
+import 'package:flutter_dermascan/src/shared/data/repositories/diagnose_history_repository_impl.dart';
 import 'package:flutter_dermascan/src/shared/data/repositories/local_auth_repository_impl.dart';
+import 'package:flutter_dermascan/src/shared/domain/usecases/get_diagnose_history_use_case.dart';
 import 'package:flutter_dermascan/src/shared/domain/usecases/get_local_auth_use_case.dart';
 import 'package:flutter_dermascan/src/shared/domain/usecases/save_local_auth_use_case.dart';
-import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/diagnose_history/diagnose_history_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 
 void main() async {
   final ClassificationRepositoryImpl classificationRepository =
@@ -82,6 +86,11 @@ void main() async {
           classificationDataSource: ClassificationDataSource(),
         ),
       ),
+      getDiagnoseHistoryUseCase: GetDiagnoseHistoryUseCase(
+        diagnoseHistoryRepository: DiagnoseHistoryRepositoryImpl(
+          diagnoseHistoryDataSource: DiagnoseHistoryDataSource(),
+        ),
+      ),
     ),
   );
 }
@@ -97,6 +106,7 @@ class MyApp extends StatelessWidget {
   final SaveLocalAuthUseCase saveLocalAuthUseCase;
   final SaveClassifyResultUseCase saveClassifyResultUseCase;
   final GetDetailDiagnoseUseCase getDetailDiagnoseUseCase;
+  final GetDiagnoseHistoryUseCase getDiagnoseHistoryUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
@@ -109,6 +119,7 @@ class MyApp extends StatelessWidget {
     required this.saveLocalAuthUseCase,
     required this.saveClassifyResultUseCase,
     required this.getDetailDiagnoseUseCase,
+    required this.getDiagnoseHistoryUseCase,
   });
 
   @override
@@ -142,6 +153,9 @@ class MyApp extends StatelessWidget {
                 saveClassifyResultUseCase,
                 getDetailDiagnoseUseCase,
               ),
+        ),
+        BlocProvider(
+          create: (context) => DiagnoseHistoryBloc(getDiagnoseHistoryUseCase),
         ),
       ],
       child: MaterialApp.router(

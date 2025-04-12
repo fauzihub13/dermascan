@@ -4,7 +4,7 @@ import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_bloc.dart';
-import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/form_input.dart';

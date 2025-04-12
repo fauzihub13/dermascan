@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
-import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';

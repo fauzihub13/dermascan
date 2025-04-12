@@ -7,7 +7,7 @@ import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_card.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_row.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/label_action_card.dart';
-import 'package:flutter_dermascan/src/shared/presentation/bloc/bloc/local_auth_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     break;
                 }
                 return Text(
-                  name,
+                  name, 
                   style: TextStyle(
                     fontSize: FontSize.standardUp2,
                     fontWeight: FontWeight.w500,

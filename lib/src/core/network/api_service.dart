@@ -13,7 +13,7 @@ class ApiService {
 
   static final ApiService instance = ApiService._singleton();
 
-  String baseUrl = Variables.baseUrl;
+  String baseUrl = Variables.baseApiUrl;
   final AuthLocalHelper authLocalHelper = AuthLocalHelper();
 
   late final Dio _dio = Dio(

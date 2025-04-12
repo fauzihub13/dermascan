@@ -31,6 +31,7 @@ class _ScanOptionDialogState extends State<ScanOptionDialog> {
       final croppedImage = await cropImages(image);
 
       if (croppedImage != null && mounted) {
+        Navigator.of(context).pop();
         context.pushNamed(
           RouteName.detailDiagnosePage,
           extra: croppedImage.path,

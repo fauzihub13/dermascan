@@ -231,12 +231,13 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                     listener: (context, state) {
                       switch (state) {
                         case SuccessSaveResult():
+                          Navigator.of(context).pop();
                           CustomSnackbar.show(
                             context,
                             message: 'Berhasil meyimpan hasil diganosa',
                             status: 'success',
                           );
-                          context.pushNamed(RouteName.diagnoseHistoryPage);
+                          context.goNamed(RouteName.landingPage);
                           break;
                         case ErrorSaveResult(:final failure):
                           CustomSnackbar.show(
@@ -248,6 +249,22 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                       }
                     },
                     builder: (context, state) {
+                      VoidCallback onPressed = () {
+                        context.read<ClassifyBloc>().add(
+                          ClassifyEvent.saveResult(
+                            imagePath: widget.imagePath,
+                            label: labelController.text,
+                            priority: priority,
+                            reuslts: classifiedResults,
+                          ),
+                        );
+                      };
+                      String label = 'Simpan Hasil';
+                      switch (state) {
+                        case SuccessSaveResult():
+                          label = 'Sudah disimpan';
+                          onPressed = () {};
+                      }
                       return CustomButton.filled(
                         onPressed: () {
                           showDialog(
@@ -255,16 +272,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                             builder: (BuildContext dialogContext) {
                               return SaveDiagnoseDialog(
                                 labelController: labelController,
-                                onPressed: () {
-                                  context.read<ClassifyBloc>().add(
-                                    ClassifyEvent.saveResult(
-                                      imagePath: widget.imagePath,
-                                      label: labelController.text,
-                                      priority: priority,
-                                      reuslts: classifiedResults,
-                                    ),
-                                  );
-                                },
+                                onPressed: onPressed,
                                 onChanged: (value) {
                                   setState(() {
                                     priority = value;
@@ -274,7 +282,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                             },
                           );
                         },
-                        label: 'Simpan Hasil',
+                        label: label,
                       );
                     },
                   ),
