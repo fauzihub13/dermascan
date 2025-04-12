@@ -20,7 +20,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   @override
   void initState() {
     super.initState();
@@ -54,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
                   image:
-                      const AssetImage('assets/images/profile.jpg')
+                      const AssetImage('assets/images/profile_icon.png')
                           as ImageProvider,
                   fit: BoxFit.fill,
                 ),
@@ -70,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     break;
                 }
                 return Text(
-                  name, 
+                  name,
                   style: TextStyle(
                     fontSize: FontSize.standardUp2,
                     fontWeight: FontWeight.w500,

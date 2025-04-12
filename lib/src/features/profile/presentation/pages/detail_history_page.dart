@@ -19,7 +19,7 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   List<double> tabHeights = [0, 0, 0, 0];
-  
+
   @override
   void initState() {
     context.read<ClassifyBloc>().add(
@@ -109,6 +109,7 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                     Tab(text: 'Solusi'),
                   ],
                 ),
+                const SizedBox(height: 10),
                 BlocConsumer<ClassifyBloc, ClassifyState>(
                   listener: (context, state) {
                     switch (state) {
@@ -177,7 +178,7 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
-            tabHeights[index] = textPainter.height * 1.3;
+            tabHeights[index] = textPainter.height * 1.4;
           });
         });
 

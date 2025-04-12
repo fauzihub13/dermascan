@@ -43,7 +43,7 @@ class MainAppbar extends StatelessWidget {
               backgroundColor: DefaultColors.primaryBlue,
               radius: 24.0,
               backgroundImage:
-                  const AssetImage('assets/images/profile.jpg')
+                  const AssetImage('assets/images/profile_icon.png')
                       as ImageProvider,
             ),
           ],

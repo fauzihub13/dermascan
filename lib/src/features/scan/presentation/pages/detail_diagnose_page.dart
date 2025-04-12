@@ -313,7 +313,7 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
-            tabHeights[index] = textPainter.height * 1.3;
+            tabHeights[index] = textPainter.height * 1.4;
           });
         });
 

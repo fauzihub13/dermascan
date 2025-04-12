@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                       count = listDiagnoseHistoryEntity.length;
                       if (listDiagnoseHistoryEntity.isNotEmpty) {
                         lastCheck = TimeAgoHelper.timeAgo(
-                          listDiagnoseHistoryEntity.last.createdAt,
+                          listDiagnoseHistoryEntity.first.createdAt,
                         );
                       }
                   }
