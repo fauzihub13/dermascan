@@ -3,7 +3,8 @@ part of 'classify_bloc.dart';
 @freezed
 class ClassifyState with _$ClassifyState {
   const factory ClassifyState.initial() = Initial;
-  const factory ClassifyState.loading() = Loading;
+  const factory ClassifyState.loadingSaveResult() = LoadingSaveResult;
+  const factory ClassifyState.loadingGetDetailDiagnose() = LoadingGetDetailDiagnose;
   const factory ClassifyState.successSaveResult() = SuccessSaveResult;
   const factory ClassifyState.successGetDetailDiagnose(
     ClassificationDetailEntity classificationDetailEntity,

@@ -20,7 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     : super(AuthState.initial()) {
       
     on<Login>((event, emit) async {
-      emit(Loading());
+      emit(LoadingLogin());
       final result = await loginUseCase.call(event.email, event.password);
       await result.fold((error) async => emit(LoginError(error)), (success) async {
         final userModel = UserModel.fromEntity(success);
@@ -30,7 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<Register>((event, emit) async {
-      emit(Loading());
+      emit(LoadingRegister());
       final result = await registerUseCase.call(
         event.name,
         event.email,
@@ -48,7 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<Logout>((event, emit) async {
-      emit(Loading());
+      emit(LoadingLogout());
       final result = await logoutUseCase.call();
       await result.fold((error) async => emit(LogoutError(error)), (success) async {
         await AuthLocalHelper().removeAuthData();

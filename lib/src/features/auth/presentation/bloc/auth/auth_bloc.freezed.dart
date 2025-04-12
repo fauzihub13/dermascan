@@ -311,8 +311,8 @@ String toString() {
 /// @nodoc
 
 
-class Loading implements AuthState {
-  const Loading();
+class LoadingLogin implements AuthState {
+  const LoadingLogin();
   
 
 
@@ -322,7 +322,7 @@ class Loading implements AuthState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingLogin);
 }
 
 
@@ -331,7 +331,71 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthState.loading()';
+  return 'AuthState.loadingLogin()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class LoadingRegister implements AuthState {
+  const LoadingRegister();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingRegister);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'AuthState.loadingRegister()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class LoadingLogout implements AuthState {
+  const LoadingLogout();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingLogout);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'AuthState.loadingLogout()';
 }
 
 

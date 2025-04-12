@@ -116,7 +116,9 @@ class _LoginPageState extends State<LoginPage> {
                                   'Berhasil masuk sebagai ${userEntity.name}',
                               status: 'success',
                             );
-                            context.read<LocalAuthBloc>().add(LocalAuthEvent.saveLocalAuth(userEntity));
+                            context.read<LocalAuthBloc>().add(
+                              LocalAuthEvent.saveLocalAuth(userEntity),
+                            );
                             RoutePage.isLoggedIn = true;
                             context.goNamed(RouteName.landingPage);
                             break;
@@ -130,8 +132,11 @@ class _LoginPageState extends State<LoginPage> {
                         }
                       },
                       builder: (context, state) {
-                        return CustomButton.filled(
-                          onPressed: () {
+                        String label = 'Masuk';
+                        VoidCallback onPressed = () {};
+                        
+                        if (state is! LoadingLogin) {
+                          onPressed = () {
                             if (formKey.currentState!.validate()) {
                               context.read<AuthBloc>().add(
                                 AuthEvent.login(
@@ -140,8 +145,20 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               );
                             }
-                          },
-                          label: 'Masuk',
+                          };
+                        }
+
+                        switch (state) {
+                          case LoadingLogin():
+                            label = 'Memproses...';
+                            break;
+                          case SuccessLogin():
+                            label = 'Berhasil masuk';
+                            break;
+                        }
+                        return CustomButton.filled(
+                          onPressed: onPressed,
+                          label: label,
                         );
                       },
                     ),

@@ -116,7 +116,13 @@ class _HistoryPageState extends State<HistoryPage> {
                               },
                             );
                       case ErrorGetDiagnoseHistory(:final failure):
-                        return Center(child: Text('${failure.message}'));
+                        return Center(child: Text('${failure.message}',
+                            style: TextStyle(
+                              fontSize: FontSize.standardUp,
+                              fontWeight: FontWeight.w400,
+                              color: DefaultColors.grey,
+                            ),
+                          ));
                     }
                     return Center(child: Text(''));
                   },

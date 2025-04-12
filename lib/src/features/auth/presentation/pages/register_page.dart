@@ -172,8 +172,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                     },
                     builder: (context, state) {
-                      return CustomButton.filled(
-                        onPressed: () {
+                      String label = 'Daftar';
+                      VoidCallback onPressed = () {};
+
+                      if (state is! LoadingRegister) {
+                        onPressed = () {
                           if (formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
                               AuthEvent.register(
@@ -185,8 +188,20 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             );
                           }
-                        },
-                        label: 'Daftar',
+                        };
+                      }
+
+                      switch (state) {
+                        case LoadingRegister():
+                          label = 'Memproses...';
+                          break;
+                        case SuccessLogin():
+                          label = 'Berhasil daftar';
+                          break;
+                      }
+                      return CustomButton.filled(
+                        onPressed: onPressed,
+                        label: label,
                       );
                     },
                   ),

@@ -71,14 +71,14 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
       },
       builder: (context, state) {
         switch (state) {
-          case ClasifyImageLoading():
-            return Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(
-                  color: DefaultColors.primaryColor,
-                ),
-              ),
-            );
+          // case ClasifyImageLoading():
+          //   return Scaffold(
+          //     body: Center(
+          //       child: CircularProgressIndicator(
+          //         color: DefaultColors.primaryColor,
+          //       ),
+          //     ),
+          //   );
 
           case ClasifyImageError(:final failure):
             return Scaffold(body: Center(child: Text('${failure.message}')));
@@ -249,18 +249,27 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                       }
                     },
                     builder: (context, state) {
-                      VoidCallback onPressed = () {
-                        context.read<ClassifyBloc>().add(
-                          ClassifyEvent.saveResult(
-                            imagePath: widget.imagePath,
-                            label: labelController.text,
-                            priority: priority,
-                            reuslts: classifiedResults,
-                          ),
-                        );
-                      };
                       String label = 'Simpan Hasil';
+                      VoidCallback onPressed = () {};
+
+                      if (state is! LoadingSaveResult) {
+                        onPressed = () {
+                          context.read<ClassifyBloc>().add(
+                            ClassifyEvent.saveResult(
+                              imagePath: widget.imagePath,
+                              label: labelController.text,
+                              priority: priority,
+                              reuslts: classifiedResults,
+                            ),
+                          );
+                        };
+                      }
+
                       switch (state) {
+                        case LoadingSaveResult():
+                          label = 'Memproses...';
+                          onPressed = () {};
+
                         case SuccessSaveResult():
                           label = 'Sudah disimpan';
                           onPressed = () {};
@@ -272,7 +281,10 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                             builder: (BuildContext dialogContext) {
                               return SaveDiagnoseDialog(
                                 labelController: labelController,
-                                onPressed: onPressed,
+                                onPressed:
+                                    state is LoadingSaveResult
+                                        ? () {}
+                                        : onPressed,
                                 onChanged: (value) {
                                   setState(() {
                                     priority = value;
@@ -290,7 +302,18 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
               ),
             );
         }
-        return Scaffold(body: Center(child: Text('Mengklasifikasi gambar...')));
+        return Scaffold(
+          body: Center(
+            child: Text(
+              'Mengklasifikasi gambar...',
+              style: TextStyle(
+                fontSize: FontSize.standardUp,
+                fontWeight: FontWeight.w400,
+                color: DefaultColors.grey,
+              ),
+            ),
+          ),
+        );
       },
     );
   }

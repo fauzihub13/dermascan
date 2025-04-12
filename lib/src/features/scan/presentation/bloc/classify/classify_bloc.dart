@@ -16,7 +16,7 @@ class ClassifyBloc extends Bloc<ClassifyEvent, ClassifyState> {
   ClassifyBloc(this.saveClassifyResultUseCase, this.getDetailDiagnoseUseCase) : super(ClassifyState.initial()) {
 
     on<SaveResult>((event, emit) async {
-      emit(Loading());
+      emit(LoadingSaveResult());
        final result = await saveClassifyResultUseCase.call(
           event.imagePath,
           event.label,
@@ -34,7 +34,7 @@ class ClassifyBloc extends Bloc<ClassifyEvent, ClassifyState> {
     });
 
     on<GetDetailDiagnose>((event, emit) async {
-      emit(Loading());
+      emit(LoadingGetDetailDiagnose());
        final result = await getDetailDiagnoseUseCase.call(
           event.diganose,
         );

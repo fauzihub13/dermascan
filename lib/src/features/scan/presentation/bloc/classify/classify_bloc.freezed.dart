@@ -283,8 +283,8 @@ String toString() {
 /// @nodoc
 
 
-class Loading implements ClassifyState {
-  const Loading();
+class LoadingSaveResult implements ClassifyState {
+  const LoadingSaveResult();
   
 
 
@@ -294,7 +294,7 @@ class Loading implements ClassifyState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingSaveResult);
 }
 
 
@@ -303,7 +303,39 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ClassifyState.loading()';
+  return 'ClassifyState.loadingSaveResult()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class LoadingGetDetailDiagnose implements ClassifyState {
+  const LoadingGetDetailDiagnose();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingGetDetailDiagnose);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ClassifyState.loadingGetDetailDiagnose()';
 }
 
 
