@@ -1,3 +1,4 @@
 -dontwarn android.media.LoudnessCodecController
 -dontwarn org.tensorflow.lite.gpu.GpuDelegateFactory$Options
 -keep class dio.** { *; }
+-keep class com.flutter_dermascan.** { *; }

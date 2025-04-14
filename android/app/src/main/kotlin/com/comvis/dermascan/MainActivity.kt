@@ -1,4 +1,4 @@
-package com.example.flutter_dermascan
+package com.comvis.dermascan
 
 import io.flutter.embedding.android.FlutterActivity
 
