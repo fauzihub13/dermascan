@@ -8,6 +8,7 @@ import 'package:flutter_dermascan/src/features/scan/domain/repositories/classifi
 import 'package:flutter_dermascan/src/features/scan/domain/usecases/classify_image_use_case.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/classify_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify_image/classify_image_bloc.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/detail_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/features/scan/presentation/widgets/save_diagnose_dialog.dart';
 import 'package:flutter_dermascan/src/shared/presentation/bloc/diagnose_history/diagnose_history_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
@@ -117,13 +118,39 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          labelText,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: FontSize.diseaseName,
-                            fontWeight: FontWeight.w600,
-                            color: DefaultColors.darkBlue,
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return DetailDiagnoseDialog(
+                                  classificationResultEntity:
+                                      classificationResultEntity,
+                                );
+                              },
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  labelText,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: FontSize.diseaseName,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultColors.darkBlue,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.navigate_next,
+                                size: 40,
+                                color: DefaultColors.grey.withValues(
+                                  alpha: 0.4,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
 
@@ -181,7 +208,6 @@ class _DetailDiagnosePageState extends State<DetailDiagnosePage>
                             }
                           },
                           builder: (context, state) {
-                            
                             switch (state) {
                               case SuccessGetDetailDiagnose(
                                 :final classificationDetailEntity,

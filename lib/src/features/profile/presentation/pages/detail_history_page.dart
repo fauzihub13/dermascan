@@ -6,6 +6,7 @@ import 'package:flutter_dermascan/src/features/scan/presentation/bloc/classify/c
 import 'package:flutter_dermascan/src/shared/domain/entities/diagnose_history_entity.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/detail_diagnose_dialog.dart';
 
 class DetailHistoryPage extends StatefulWidget {
   final DiagnoseHistoryEntity diagnoseHistoryEntity;
@@ -59,13 +60,40 @@ class _DetailHistoryPageState extends State<DetailHistoryPage>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  widget.diagnoseHistoryEntity.classifyImageResults.first.label,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: FontSize.diseaseName,
-                    fontWeight: FontWeight.w600,
-                    color: DefaultColors.darkBlue,
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return DetailDiagnoseDialog(
+                          diagnoseHistoryEntity: widget.diagnoseHistoryEntity,
+                        );
+                      },
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget
+                              .diagnoseHistoryEntity
+                              .classifyImageResults
+                              .first
+                              .label,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: FontSize.diseaseName,
+                            fontWeight: FontWeight.w600,
+                            color: DefaultColors.darkBlue,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.navigate_next,
+                        size: 40,
+                        color: DefaultColors.grey.withValues(alpha: 0.4),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 12),
