@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_dermascan/src/core/helper/auth_local_helper.dart';
 import 'package:flutter_dermascan/src/core/network/failure.dart';
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/change_password_use_case.dart';
+import 'package:flutter_dermascan/src/features/profile/domain/usecases/delete_account_use_case.dart';
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/update_profile_use_case.dart';
 import 'package:flutter_dermascan/src/shared/data/models/user_model.dart';
 import 'package:flutter_dermascan/src/shared/domain/entities/user_entity.dart';
@@ -14,8 +15,12 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UpdateProfileUseCase updateProfileUseCase;
   final ChangePasswordUseCase changePasswordUseCase;
-  ProfileBloc(this.updateProfileUseCase, this.changePasswordUseCase)
-    : super(ProfileState.initial()) {
+  final DeleteAccountUseCase deleteAccountUseCase;
+  ProfileBloc(
+    this.updateProfileUseCase,
+    this.changePasswordUseCase,
+    this.deleteAccountUseCase,
+  ) : super(ProfileState.initial()) {
     on<UpdateProfile>((event, emit) async {
       emit(Loading());
       final result = await updateProfileUseCase.call(event.name, event.email);
@@ -46,6 +51,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           emit(SuccessChangePassword(success));
         },
       );
+    });
+
+    on<DeleteAccount>((event, emit) async {
+      emit(LoadingDeleteAccount());
+      final result = await deleteAccountUseCase.call();
+      await result.fold((error) async => emit(ErrorDeleteAccount(error)), (
+        success,
+      ) async {
+        await AuthLocalHelper().removeAuthData();
+        emit(SuccessDeleteAccount());
+      });
     });
   }
 }

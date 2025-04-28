@@ -77,6 +77,38 @@ String toString() {
 /// @nodoc
 
 
+class DeleteAccount implements ProfileEvent {
+  const DeleteAccount();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteAccount);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ProfileEvent.deleteAccount()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
 class UpdateProfile implements ProfileEvent {
   const UpdateProfile({required this.name, required this.email});
   
@@ -298,6 +330,70 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
   return 'ProfileState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class LoadingDeleteAccount implements ProfileState {
+  const LoadingDeleteAccount();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingDeleteAccount);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ProfileState.loadingDeleteAccount()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class SuccessDeleteAccount implements ProfileState {
+  const SuccessDeleteAccount();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuccessDeleteAccount);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ProfileState.successDeleteAccount()';
 }
 
 
@@ -563,6 +659,72 @@ class _$ErrorChangePasswordCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? failure = null,}) {
   return _then(ErrorChangePassword(
 null == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
+as Failure,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class ErrorDeleteAccount implements ProfileState {
+  const ErrorDeleteAccount(this.failur);
+  
+
+ final  Failure failur;
+
+/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ErrorDeleteAccountCopyWith<ErrorDeleteAccount> get copyWith => _$ErrorDeleteAccountCopyWithImpl<ErrorDeleteAccount>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ErrorDeleteAccount&&(identical(other.failur, failur) || other.failur == failur));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,failur);
+
+@override
+String toString() {
+  return 'ProfileState.errorDeleteAccount(failur: $failur)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ErrorDeleteAccountCopyWith<$Res> implements $ProfileStateCopyWith<$Res> {
+  factory $ErrorDeleteAccountCopyWith(ErrorDeleteAccount value, $Res Function(ErrorDeleteAccount) _then) = _$ErrorDeleteAccountCopyWithImpl;
+@useResult
+$Res call({
+ Failure failur
+});
+
+
+
+
+}
+/// @nodoc
+class _$ErrorDeleteAccountCopyWithImpl<$Res>
+    implements $ErrorDeleteAccountCopyWith<$Res> {
+  _$ErrorDeleteAccountCopyWithImpl(this._self, this._then);
+
+  final ErrorDeleteAccount _self;
+  final $Res Function(ErrorDeleteAccount) _then;
+
+/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? failur = null,}) {
+  return _then(ErrorDeleteAccount(
+null == failur ? _self.failur : failur // ignore: cast_nullable_to_non_nullable
 as Failure,
   ));
 }

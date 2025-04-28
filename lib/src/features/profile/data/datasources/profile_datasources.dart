@@ -55,4 +55,16 @@ class ProfileDatasources {
       return Left(Failure(message: response.data['message']));
     }
   }
+
+  Future<Either<Failure, bool>> deleteAccount() async {
+    final response = await _apiService.request(
+      endpoint: '/account/delete',
+      method: DioMethod.delete,
+    );
+    if (response.statusCode == 200) {
+      return Right(true);
+    } else {
+      return Left(Failure(message: response.data['message']));
+    }
+  }
 }

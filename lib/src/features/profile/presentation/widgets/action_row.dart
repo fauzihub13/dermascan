@@ -5,11 +5,13 @@ class ActionRow extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
+  final Color color;
   const ActionRow({
     super.key,
     required this.label,
     required this.icon,
     required this.onPressed,
+    this.color = DefaultColors.darkBlue,
   });
 
   @override
@@ -19,18 +21,18 @@ class ActionRow extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          Icon(icon, color: DefaultColors.darkBlue),
+          Icon(icon, color: color),
           SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: FontSize.standard,
               fontWeight: FontWeight.w400,
-              color: DefaultColors.darkBlue,
+              color: color,
             ),
           ),
           Spacer(),
-          Icon(Icons.navigate_next, color: DefaultColors.darkBlue),
+          Icon(Icons.navigate_next, color: color),
         ],
       ),
     );

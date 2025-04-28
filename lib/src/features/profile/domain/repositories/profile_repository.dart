@@ -13,4 +13,5 @@ abstract class ProfileRepository{
     required String newPassword,
     required String passwordConfirmation,
   });
+  Future<Either<Failure, bool>> deleteAccount();
 }

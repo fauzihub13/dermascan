@@ -4,11 +4,13 @@ import 'package:flutter_dermascan/src/core/router/route_name.dart';
 import 'package:flutter_dermascan/src/core/router/route_page.dart';
 import 'package:flutter_dermascan/src/core/utils/theme.dart';
 import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_card.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/action_row.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/widgets/label_action_card.dart';
 import 'package:flutter_dermascan/src/shared/presentation/bloc/local_auth/local_auth_bloc.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_appbar.dart';
+import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_button.dart';
 import 'package:flutter_dermascan/src/shared/presentation/widgets/custom_snackbar.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     _initializeData();
   }
+
+  bool isClicked = false;
 
   Future<void> _initializeData() async {
     context.read<LocalAuthBloc>().add(LocalAuthEvent.getLocalAuth());
@@ -134,6 +138,89 @@ class _ProfilePageState extends State<ProfilePage> {
                       icon: Icons.logout,
                       onPressed: () {
                         context.read<AuthBloc>().add(AuthEvent.logout());
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+            BlocConsumer<ProfileBloc, ProfileState>(
+              listener: (context, state) {
+                if (state is SuccessDeleteAccount) {
+                  CustomSnackbar.show(
+                    context,
+                    message: 'Berhasil menghapus akun.',
+                    status: 'success',
+                  );
+                  RoutePage.isLoggedIn = false;
+                  context.goNamed(RouteName.loginPage);
+                } else if (state is ErrorDeleteAccount) {
+                  CustomSnackbar.show(
+                    context,
+                    message: state.failur.message!,
+                    status: 'fail',
+                  );
+                }
+              },
+              builder: (context, state) {
+                final isLoading = state is LoadingDeleteAccount;
+                return ActionCard(
+                  color: DefaultColors.lightRedBadge.withValues(alpha: 0.3),
+                  list: [
+                    ActionRow(
+                      label: 'Hapus Akun',
+                      icon: Icons.delete,
+                      color: DefaultColors.darkRedBadge,
+                      onPressed: () {
+                        showModalBottomSheet(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          context: context,
+                          builder: (context) {
+                            return Container(
+                              padding: const EdgeInsets.all(20),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                alignment: WrapAlignment.center,
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  Text(
+                                    'Yakin menghapus akun Anda?',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: FontSize.standardUp2,
+                                      fontWeight: FontWeight.w700,
+                                      color: DefaultColors.darkBlue,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  CustomButton.filled(
+                                    onPressed:
+                                        isLoading
+                                            ? () {}
+                                            : () =>
+                                                context.read<ProfileBloc>().add(
+                                                  ProfileEvent.deleteAccount(),
+                                                ),
+                                    label: 'Hapus',
+                                    color: DefaultColors.darkRedBadge,
+                                  ),
+                                  CustomButton.filled(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    label: 'Kembali',
+                                  ),
+                                  const SizedBox(height: 6),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

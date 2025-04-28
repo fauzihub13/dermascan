@@ -4,14 +4,20 @@ import 'package:flutter_dermascan/src/features/profile/presentation/widgets/acti
 
 class ActionCard extends StatelessWidget {
   final List<ActionRow> list;
-  const ActionCard({super.key, required this.list});
+  final Color? color;
+
+  const ActionCard({
+    super.key,
+    required this.list,
+    this.color = DefaultColors.lightBlue,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: DefaultColors.lightBlue,
+      decoration: BoxDecoration(
+        color: color,
         borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
       child: Column(

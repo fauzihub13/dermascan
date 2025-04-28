@@ -9,7 +9,7 @@ BLoC Event
 ↓
 Call Usecase 
 ↓
-Call Abstract ContactRepository 
+Call Abstract Repository 
 ↓
 Call Implement Repository 
 ↓

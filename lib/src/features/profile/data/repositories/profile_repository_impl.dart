@@ -30,4 +30,9 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }) async {
     return await _profileDatasources.updateProfile(name: name, email: email);
   }
+
+  @override
+  Future<Either<Failure, bool>> deleteAccount() async {
+    return await _profileDatasources.deleteAccount();
+  }
 }

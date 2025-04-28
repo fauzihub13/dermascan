@@ -12,6 +12,7 @@ import 'package:flutter_dermascan/src/features/auth/presentation/bloc/auth/auth_
 import 'package:flutter_dermascan/src/features/profile/data/datasources/profile_datasources.dart';
 import 'package:flutter_dermascan/src/features/profile/data/repositories/profile_repository_impl.dart';
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/change_password_use_case.dart';
+import 'package:flutter_dermascan/src/features/profile/domain/usecases/delete_account_use_case.dart';
 import 'package:flutter_dermascan/src/features/profile/domain/usecases/update_profile_use_case.dart';
 import 'package:flutter_dermascan/src/features/profile/presentation/bloc/profile/profile_bloc.dart';
 import 'package:flutter_dermascan/src/features/scan/data/datasources/classification_data_source.dart';
@@ -91,6 +92,11 @@ void main() async {
           diagnoseHistoryDataSource: DiagnoseHistoryDataSource(),
         ),
       ),
+      deleteAccountUseCase: DeleteAccountUseCase(
+        profileRepository: ProfileRepositoryImpl(
+          profileDatasources: ProfileDatasources(),
+        ),
+      ),
     ),
   );
 }
@@ -107,6 +113,7 @@ class MyApp extends StatelessWidget {
   final SaveClassifyResultUseCase saveClassifyResultUseCase;
   final GetDetailDiagnoseUseCase getDetailDiagnoseUseCase;
   final GetDiagnoseHistoryUseCase getDiagnoseHistoryUseCase;
+  final DeleteAccountUseCase deleteAccountUseCase;
   const MyApp({
     super.key,
     required this.classificationRepository,
@@ -120,6 +127,7 @@ class MyApp extends StatelessWidget {
     required this.saveClassifyResultUseCase,
     required this.getDetailDiagnoseUseCase,
     required this.getDiagnoseHistoryUseCase,
+    required this.deleteAccountUseCase,
   });
 
   @override
@@ -139,8 +147,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create:
-              (context) =>
-                  ProfileBloc(updateProfileUseCase, changePasswordUseCase),
+              (context) => ProfileBloc(
+                updateProfileUseCase,
+                changePasswordUseCase,
+                deleteAccountUseCase,
+              ),
         ),
         BlocProvider(
           create:
